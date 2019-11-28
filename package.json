@@ -4,10 +4,9 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "copy": "cp -r assets/* dist/build",
-    "tsc": "tsc",
+    "build": "tsc && mkdir -p dist/assets && cp -r src/assets/* dist/assets",
     "dev": "ts-node-dev --respawn --transpileOnly ./src/server.ts",
-    "prod": "tsc && node ./dist/build/server.js"
+    "prod": "tsc && mkdir -p dist/assets && cp -r src/assets/* dist/assets node ./dist/server.js"
   },
   "author": "",
   "license": "ISC",
