@@ -1,3 +1,13 @@
+
+// config
+// ---------------------------------------------------------
+
+const url = 'http://10.67.186.167';
+const port = '3011';
+const apiVersion = 'v1';
+
+
+
 // plot unoptimized data
 // ---------------------------------------------------------
 
@@ -171,7 +181,8 @@ plotUnoptimized();
 // get optimization data
 async function getUnoptimizedData() {
 
-    const response = await fetch('http://localhost:3011/v1');
+    const requestUrl = `${url}:${port}/${apiVersion}`;
+    const response = await fetch(requestUrl);
     const optimizationData = await response.json();
 
     return optimizationData;
@@ -352,14 +363,15 @@ async function plotOptimized() {
 async function getOptimizedData() {
 
     // get unoptimized data
-    const response = await fetch('http://localhost:3011/v1');
+    const requestUrl = `${url}:${port}/${apiVersion}`;
+    const response = await fetch(requestUrl);
     const unoptimizedData = await response.json();
 
     // get optimized data
     try {
         
         const optimizationData = await postData(
-            'http://localhost:3011/v1',
+            requestUrl,
             unoptimizedData
         );
 
