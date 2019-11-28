@@ -24,12 +24,13 @@ router.get('/', (req, res, next) => {
             } else {
                 res.status(optimizationRes.status).json( {errors: [errors.internalServer]} )
             }
-            
-            
         }
     );
 });
 
+
+// POST
+// -----------------------------------------------
 
 router.post('/', (req, res, next) => {
 
@@ -41,9 +42,7 @@ router.post('/', (req, res, next) => {
                 res.status(optimizationRes.status).json(optimizationRes.data)
             } else {
                 res.status(optimizationRes.status).json( {errors: [errors.internalServer]} )
-            }
-            
-            
+            }  
         }
     );
 });

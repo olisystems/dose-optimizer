@@ -44,8 +44,8 @@ function getOptimizationInfo( callback: IResponseCallback ) : void {
         loadStatic: loadStaticInput,
         acDemand: acDemandInput,
         clDemand: clDemandInput,
-        acTimeRange: [45, 55],
-        clTimeRange: [60, 73],
+        acTimeRange: [45, 65],
+        clTimeRange: [40, 75],
         acMaxLoad: 1000,
         clMaxLoad: 2000
     }
@@ -75,8 +75,8 @@ function optimize(req: any, callback: IResponseCallback ) : void {
             clDemand: req[0].clDemand,
             acTimeRange: req[0].acTimeRange,
             clTimeRange: req[0].clTimeRange,
-            acMaxLoad: 1000,
-            clMaxLoad: 2000
+            acMaxLoad: 2000,
+            clMaxLoad: 3000
         }
     );
     
