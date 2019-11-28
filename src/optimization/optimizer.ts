@@ -35,12 +35,12 @@ export class Optimizer {
     public getOptimization () {
         
         // ac demand optimization
-        if (this.optimizationIsNecessary(this._optimizatoinFeed.supply.value, this._optimizatoinFeed.acDemand.value)) {
+        if (this.optimizationIsNecessary(this._optimizatoinFeed.supply.value, this._optimizatoinFeed.loadStatic.value, this._optimizatoinFeed.acDemand.value)) {
 
             this._optimization.acDemand.value = this.optimizeAc();
         } 
         // cl demand optimization
-        if (this.optimizationIsNecessary(this._optimizatoinFeed.supply.value, this._optimizatoinFeed.clDemand.value)) {
+        if (this.optimizationIsNecessary(this._optimizatoinFeed.supply.value, this._optimizatoinFeed.loadStatic.value, this._optimizatoinFeed.clDemand.value)) {
             
             this._optimization.clDemand.value = this.optimizeCl();
         } 
@@ -49,17 +49,50 @@ export class Optimizer {
     }
 
 
-    private optimizationIsNecessary (supply: number[], demand: number[]): boolean {
+    private optimizationIsNecessary (supply: number[], loadStatic: number[], demand: number[]): boolean {
 
         var optimizationIsNecessary: boolean = false; 
-        supply.forEach(function(value, index) {
+
+        // sum up static load and demand
+        var loadSum = loadStatic.map(function (loadSum, index) {
+            return loadSum + demand[index];
+        });
+
+        // check if any demand value exceeds a supply value 
+        supply.forEach(function(supplyValue, index) {
             
-            if ((value - demand[index]) < 0) {
+            if ((supplyValue - loadSum[index]) < 0) {
                 optimizationIsNecessary = true;
             }
         });
 
         return optimizationIsNecessary;
+    }
+
+
+    private sumOfExceedingValues (supply: number[], loadStatic: number[], demand: number[]): number {
+
+        var sumOfExceedingValues: number = 0; 
+
+        // sum up static load and demand
+        var loadSum = loadStatic.map(function (loadSum, index) {
+            return loadSum + demand[index];
+        });
+
+        // check if any demand value exceeds a supply value 
+        supply.forEach(function(supplyValue, index) {
+            
+            if ( ((supplyValue - loadSum[index]) < 0) && (demand[index] > 0) ) {
+                console.log('index:          ' + index)
+                console.log('supplyValue:    ' + supplyValue)
+                console.log('loadSum[index]: ' + loadSum[index])
+                console.log('sum:            ' + (loadSum[index] - supplyValue))
+                console.log('---------------------------------\n')
+                sumOfExceedingValues += (loadSum[index] - supplyValue);
+            }
+        });
+
+        return sumOfExceedingValues;
     }
 
     
@@ -126,8 +159,8 @@ export class Optimizer {
         let clMaxLoad: number = this._clMaxLoad;
 
         // set new load values by summing up the static loads and the ac demand
-        loadValues = loadValues.map(function (num, idx) {
-            return num + acDemandValues[idx];
+        loadValues = loadValues.map(function (num, index) {
+            return num + acDemandValues[index];
         });
         
         // loop through demand values
@@ -146,8 +179,7 @@ export class Optimizer {
                     // if free supply is more than (acMaxLoad - optimizedDemandValues[i]) 
                     // then free supply = (acMaxLoad - optimizedDemandValues[i]). 
                     var freeSupply: number = Math.floor( Math.min((supplyValues[i] - loadValues[i] - optimizedDemandValues[i]), (clMaxLoad - optimizedDemandValues[i])) / 100) * 100;
-                    
-                    //Math.round(number/100) * 100 
+
                     // if free capacity and the acMaxLoad is not yet fully used then distribute
                     if (freeSupply > 0) {
                         
@@ -172,6 +204,15 @@ export class Optimizer {
             }
         });
 
+        // distribute rest if exists
+        if (this.optimizationIsNecessary(supplyValues, loadValues, optimizedDemandValues)) {
+            
+            var sumOfExceedingValues: number = this.sumOfExceedingValues(supplyValues, loadValues, optimizedDemandValues);
+            console.log('necessary');
+            console.log(sumOfExceedingValues);
+        }
+
+        // return optimized cl values
         return optimizedDemandValues;
     }
 

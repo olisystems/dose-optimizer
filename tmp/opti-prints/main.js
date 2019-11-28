@@ -198,8 +198,6 @@ async function plotOptimized() {
 
     var optimizationData = await getOptimizedData();
     optimizationData = optimizationData[0];
-    console.log(optimizationData);
-    console.log(optimizationData.supply.interval);
 
     x1 = optimizationData.supply.interval;
     x2 = optimizationData.loadStatic.interval;

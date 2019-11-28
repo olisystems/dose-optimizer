@@ -75,7 +75,7 @@ function optimize(req: any, callback: IResponseCallback ) : void {
             clDemand: req[0].clDemand,
             acTimeRange: req[0].acTimeRange,
             clTimeRange: req[0].clTimeRange,
-            acMaxLoad: 2000,
+            acMaxLoad: 1000,
             clMaxLoad: 3000
         }
     );
