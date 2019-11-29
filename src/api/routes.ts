@@ -20,8 +20,10 @@ router.get('/', (req, res, next) => {
         ( optimizationRes: IResponseObject ) : void => {
 
             if (optimizationRes.status === 200 ) {
+                
                 res.status(optimizationRes.status).json(optimizationRes.data)
             } else {
+                
                 res.status(optimizationRes.status).json( {errors: [errors.internalServer]} )
             }
         }
@@ -39,8 +41,10 @@ router.post('/', (req, res, next) => {
         ( optimizationRes: IResponseObject ) : void => {
 
             if (optimizationRes.status === 200 ) {
+                
                 res.status(optimizationRes.status).json(optimizationRes.data)
             } else {
+                
                 res.status(optimizationRes.status).json( {errors: [errors.internalServer]} )
             }  
         }

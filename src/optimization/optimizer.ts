@@ -61,7 +61,7 @@ export class Optimizer {
         // check if any demand value exceeds a supply value 
         supply.forEach(function(supplyValue, index) {
             
-            if ((supplyValue - loadSum[index]) < 0) {
+            if ( ((supplyValue - loadSum[index]) < 0) && (demand[index] > 0 ) ) {
                 optimizationIsNecessary = true;
             }
         });
@@ -70,9 +70,9 @@ export class Optimizer {
     }
 
 
-    private sumOfExceedingValues (supply: number[], loadStatic: number[], demand: number[]): number {
+    private sumOfExceedingDemand (supply: number[], loadStatic: number[], demand: number[]): number {
 
-        var sumOfExceedingValues: number = 0; 
+        var sumOfExceedingDemand: number = 0; 
 
         // sum up static load and demand
         var loadSum = loadStatic.map(function (loadSum, index) {
@@ -83,16 +83,52 @@ export class Optimizer {
         supply.forEach(function(supplyValue, index) {
             
             if ( ((supplyValue - loadSum[index]) < 0) && (demand[index] > 0) ) {
-                console.log('index:          ' + index)
-                console.log('supplyValue:    ' + supplyValue)
-                console.log('loadSum[index]: ' + loadSum[index])
-                console.log('sum:            ' + (loadSum[index] - supplyValue))
-                console.log('---------------------------------\n')
-                sumOfExceedingValues += (loadSum[index] - supplyValue);
+                
+                
+                if (loadStatic[index] > supply[index]) {
+
+                    sumOfExceedingDemand += demand[index];
+                } else {
+
+                    sumOfExceedingDemand += (loadSum[index] - supplyValue);
+                }
             }
         });
 
-        return sumOfExceedingValues;
+        return sumOfExceedingDemand;
+    }
+
+
+    private deleteExceedingDemand (supply: number[], loadStatic: number[], demand: number[], deletedExceedingDemands: number[]): number[] {
+
+        var deletedExceedingDemands: number[] = deletedExceedingDemands;
+        var deleteAmount: number;
+
+        // sum up static load and demand
+        var loadSum = loadStatic.map(function (loadSum, index) {
+            return loadSum + demand[index];
+        });
+
+        // check if any demand value exceeds a supply value 
+        supply.forEach(function(supplyValue, index) {
+            
+            if ( ((supplyValue - loadSum[index]) < 0) && (demand[index] > 0) ) {
+                
+                
+                if (loadStatic[index] > supply[index]) {
+
+                    deleteAmount += demand[index];
+                } else {
+
+                    deleteAmount += (loadSum[index] - supplyValue);
+                }
+
+                deletedExceedingDemands[index] -= deleteAmount; 
+
+            }
+        });
+
+        return deletedExceedingDemands;
     }
 
     
@@ -118,7 +154,8 @@ export class Optimizer {
                     // calculate free supply 
                     // if free supply is more than (acMaxLoad - optimizedDemandValues[i]) 
                     // then free supply = (acMaxLoad - optimizedDemandValues[i]). 
-                    var freeSupply: number = Math.floor( Math.min((supplyValues[i] - loadValues[i] - optimizedDemandValues[i]), (acMaxLoad - optimizedDemandValues[i])) / 100) * 100;
+                    //var freeSupply: number = Math.floor( Math.min((supplyValues[i] - loadValues[i] - optimizedDemandValues[i]), (acMaxLoad - optimizedDemandValues[i])) / 100) * 100;
+                    var freeSupply: number = Math.min((supplyValues[i] - loadValues[i] - optimizedDemandValues[i]), (acMaxLoad - optimizedDemandValues[i]));
 
                     // if free capacity and the acMaxLoad is not yet fully used then distribute
                     if (freeSupply > 0) {
@@ -157,6 +194,8 @@ export class Optimizer {
         let clStartInterval = this._clStartInterval;
         let clEndInterval = this._clEndInterval;
         let clMaxLoad: number = this._clMaxLoad;
+        let sumOfExceedingDemand: number; 
+
 
         // set new load values by summing up the static loads and the ac demand
         loadValues = loadValues.map(function (num, index) {
@@ -178,7 +217,8 @@ export class Optimizer {
                     // calculate free supply
                     // if free supply is more than (acMaxLoad - optimizedDemandValues[i]) 
                     // then free supply = (acMaxLoad - optimizedDemandValues[i]). 
-                    var freeSupply: number = Math.floor( Math.min((supplyValues[i] - loadValues[i] - optimizedDemandValues[i]), (clMaxLoad - optimizedDemandValues[i])) / 100) * 100;
+                    //var freeSupply: number = Math.floor( Math.min((supplyValues[i] - loadValues[i] - optimizedDemandValues[i]), (clMaxLoad - optimizedDemandValues[i])) / 100) * 100;
+                    var freeSupply: number = Math.min((supplyValues[i] - loadValues[i] - optimizedDemandValues[i]), (clMaxLoad - optimizedDemandValues[i]));
 
                     // if free capacity and the acMaxLoad is not yet fully used then distribute
                     if (freeSupply > 0) {
@@ -205,11 +245,27 @@ export class Optimizer {
         });
 
         // distribute rest if exists
-        if (this.optimizationIsNecessary(supplyValues, loadValues, optimizedDemandValues)) {
+        sumOfExceedingDemand = this.sumOfExceedingDemand(supplyValues, loadValues, optimizedDemandValues);
+        if (sumOfExceedingDemand > 0) {
             
-            var sumOfExceedingValues: number = this.sumOfExceedingValues(supplyValues, loadValues, optimizedDemandValues);
-            console.log('necessary');
-            console.log(sumOfExceedingValues);
+            // delete rest from optimizedDemandValues
+            optimizedDemandValues = this.deleteExceedingDemand(supplyValues, loadValues, optimizedDemandValues, optimizedDemandValues);
+
+            // distribute the rest
+            var i: number = this._clStartInterval
+            while (sumOfExceedingDemand > 0) {
+
+                for (var i: number = clStartInterval - 1; i < clEndInterval; i++) {
+
+                    optimizedDemandValues[i] += 100; 
+                    sumOfExceedingDemand -= 100;
+
+                    if (sumOfExceedingDemand <= 0) {
+                        
+                        break;
+                    }
+                }
+            }
         }
 
         // return optimized cl values
