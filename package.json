@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc && mkdir -p dist/assets && cp -r src/assets/* dist/assets",
     "dev": "ts-node-dev --respawn --transpileOnly ./src/server.ts",
-    "prod": "tsc && mkdir -p dist/assets && cp -r src/assets/* dist/assets && node ./dist/server.js"
+    "start:prod": "pm2 start ./dist/server.js",
+    "stop:prod": "pm2 stop ./dist/server.js"
   },
   "author": "",
   "license": "ISC",

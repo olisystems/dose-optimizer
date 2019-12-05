@@ -1,6 +1,22 @@
-FROM node:10-slim
-WORKDIR D:\02_OLI\dose\opti-algo\dist\docker
-COPY package*.json D:\02_OLI\dose\opti-algo\dist\docker
+
+FROM node:11-alpine
+
+RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
+
+WORKDIR /home/node/app
+
+COPY package*.json ./
+
+USER node
+
 RUN npm install
-# RUN npm ci --only=production
-COPY ./dist/build D:\02_OLI\dose\opti-algo\dist\docker
+
+USER root
+
+RUN npm install pm2 -g
+
+COPY --chown=node:node . .
+
+EXPOSE 3011
+
+CMD [ "pm2-runtime", "dist/server.js" ]

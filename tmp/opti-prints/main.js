@@ -191,7 +191,7 @@ async function getUnoptimizedData() {
 
 
 
-// plot unoptimized data
+// plot optimized data
 // ---------------------------------------------------------
 
 async function plotOptimized() {

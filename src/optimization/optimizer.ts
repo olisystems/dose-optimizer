@@ -144,7 +144,13 @@ export class Optimizer {
         // if there is a demand for a block, then take it and try to distrbute it in the ac range
         optimizedDemandValues.forEach(function(value, index) {
             
+            // set demand to distribute by cutting demand with the supply 
             var demandToDistribute: number = (value + loadValues[index] - supplyValues[index]);
+            // if demand is more than the maximum ac load, then reduce the demand to maximum ac load
+            if ( (supplyValues[index] - loadValues[index]) >= acMaxLoad ) {
+
+                demandToDistribute = value - acMaxLoad;
+            }
 
             if (value > 0) {
                 
@@ -257,8 +263,17 @@ export class Optimizer {
 
                 for (var i: number = clStartInterval - 1; i < clEndInterval; i++) {
 
-                    optimizedDemandValues[i] += 100; 
-                    sumOfExceedingDemand -= 100;
+                    
+                    if (sumOfExceedingDemand >= 100) {
+                        
+                        optimizedDemandValues[i] += 100; 
+                        sumOfExceedingDemand -= 100;
+                    } else {
+                        
+                        optimizedDemandValues[i] += sumOfExceedingDemand; 
+                        sumOfExceedingDemand -= sumOfExceedingDemand;
+                    }
+                    
 
                     if (sumOfExceedingDemand <= 0) {
                         
