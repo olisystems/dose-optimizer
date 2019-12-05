@@ -1,0 +1,7 @@
+{
+    "internalServer": {
+        "name": "error",
+        "message": "internal server error",
+        "errorCode": 500
+    }
+}
