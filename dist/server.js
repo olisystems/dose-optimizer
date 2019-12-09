@@ -3,14 +3,15 @@
 // -----------------------------------------------
 var http = require('http');
 var app = require('./app');
+var config = require('./config');
 require('dotenv').config();
 http.globalAgent.maxSockets = Infinity;
 // server
 // -----------------------------------------------
 // port
-var port = process.env.SERVER_PORT || 3011;
+var port = process.env.SERVER_PORT || config.api.ports.dev;
 if (process.env.NODE_ENV !== 'production') {
-    port = process.env.SERVER_PORT || 3010;
+    port = process.env.SERVER_PORT || config.api.ports.prod;
 }
 // http
 var server = http.createServer(app);

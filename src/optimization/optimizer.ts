@@ -1,5 +1,6 @@
 
-import { IOptimizationFeed, EnergyProfile, IEnergyProfile } from '../data-models/energy-profile';
+import { IOptimizationFeed } from '../data-models/energy-profile';
+import { MqttPublisher } from "./mqtt-publisher";
 
 export class Optimizer {
 
@@ -263,7 +264,6 @@ export class Optimizer {
 
                 for (var i: number = clStartInterval - 1; i < clEndInterval; i++) {
 
-                    
                     if (sumOfExceedingDemand >= 100) {
                         
                         optimizedDemandValues[i] += 100; 
@@ -273,7 +273,6 @@ export class Optimizer {
                         optimizedDemandValues[i] += sumOfExceedingDemand; 
                         sumOfExceedingDemand -= sumOfExceedingDemand;
                     }
-                    
 
                     if (sumOfExceedingDemand <= 0) {
                         
@@ -285,6 +284,13 @@ export class Optimizer {
 
         // return optimized cl values
         return optimizedDemandValues;
+    }
+
+    
+    public publishOptimization () {
+
+        var publisher: MqttPublisher = new MqttPublisher();
+        publisher.publish('myTopic', '{"key1": "val1", "key2": "val2"}');
     }
 
 }

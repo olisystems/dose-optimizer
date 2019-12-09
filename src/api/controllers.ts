@@ -87,6 +87,8 @@ function optimize(req: any, callback: IResponseCallback ) : void {
         ]
     }
 
+    optimizer.publishOptimization();
+
     callback( controllerRes )
 }
 
