@@ -21,7 +21,11 @@ export class MqttPublisher {
 
         this._client.on('connect', () => {
             console.log('mqtt is connected in class');
-            this._client.publish('myTopic', '{"key1": "val1", "key2": "val2"}');
+            setInterval(() => { 
+                this._client.publish('DOSE/test', '{"key1": "val1", "key2": "val2"}');     
+            }, 3000);
+
+            //this._client.publish('DOSE/test', '{"key1": "val1", "key2": "val2"}');
 
         });
 
@@ -29,6 +33,39 @@ export class MqttPublisher {
             console.log('mqtt error');
             console.log(error);
         });
+        
+    }
+
+    public subscribe(topic: string, data: string) {
+
+        this._client.on('connect', () => {
+            console.log('mqtt is connected in class');
+            setInterval(() => { 
+                this._client.publish('DOSE/test', '{"key1": "val1", "key2": "val2"}');     
+            }, 3000);
+
+            //this._client.publish('DOSE/test', '{"key1": "val1", "key2": "val2"}');
+
+        });
+
+        this._client.on('error', function (error: any) {
+            console.log('mqtt error');
+            console.log(error);
+        });
+
+
+        this._client.on('connect', () => {
+        
+            this._client.subscribe('myTopic')
+        })
+    
+        this._client.on('message', (topic: any, message: any) => {
+            
+            var context = message.toString();
+            console.log(context)
+        })
+
+
         
     }
     
