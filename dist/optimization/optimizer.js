@@ -7,6 +7,7 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
     return r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var mqtt_publisher_1 = require("./mqtt-publisher");
 var Optimizer = /** @class */ (function () {
     // constructor
     function Optimizer(optimizatoinFeed) {
@@ -198,6 +199,10 @@ var Optimizer = /** @class */ (function () {
         }
         // return optimized cl values
         return optimizedDemandValues;
+    };
+    Optimizer.prototype.publishOptimization = function () {
+        var publisher = new mqtt_publisher_1.MqttPublisher();
+        publisher.publish('myTopic', '{"key1": "val1", "key2": "val2"}');
     };
     return Optimizer;
 }());
