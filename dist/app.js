@@ -33,6 +33,10 @@ app.use(function (req, res, next) {
     }
     next();
 });
+// test website for optoimization-plots
+// -----------------------------------------------
+// TODO: Remove for production version
+app.use('/', express.static('./test/optimization-plots'));
 // request routes
 // -----------------------------------------------
 app.use('/v1', routes);

@@ -48,6 +48,14 @@ app.use((req, res, next) => {
 
 
 
+// test website for optoimization-plots
+// -----------------------------------------------
+
+// TODO: Remove for production version
+app.use('/', express.static('./test/optimization-plots'));
+
+
+
 // request routes
 // -----------------------------------------------
 

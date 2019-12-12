@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "build": "tsc && mkdir -p dist/assets && cp -r src/assets/* dist/assets",
+    "build": "tsc && mkdir -p dist/assets && cp -r src/assets/* dist/assets && mkdir -p dist/test && cp -r test/* dist/test",
     "dev": "ts-node-dev --respawn --transpileOnly ./src/server.ts",
     "start:prod": "pm2 start ./dist/server.js",
     "stop:prod": "pm2 stop ./dist/server.js"
