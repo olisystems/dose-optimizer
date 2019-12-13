@@ -49,7 +49,6 @@ function optimize(req, callback) {
             optimizer.getOptimization()
         ]
     };
-    optimizer.publishOptimization();
     callback(controllerRes);
 }
 // exports
