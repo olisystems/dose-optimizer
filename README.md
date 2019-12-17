@@ -42,5 +42,7 @@ Der Service lässt sich über eine REST API ansteurn
 
 
 
+|               |                      |
+| --------------|----------------------|
 | **Endpunkt:** | https://your-host/v1 |
-| **Methode:** | POST |
+| **Methode:**  | POST                 |
