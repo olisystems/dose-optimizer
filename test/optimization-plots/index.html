@@ -15,70 +15,82 @@
     <div class="container-fluid">
 
         <!-- Nav Tabs-->
-        <ul class="nav nav-tabs" role="tablist">
+        <ul class="nav nav-tabs my-5 mx-5" role="tablist">
             <li class="nav-item">
-                <a class="nav-link active" href="#optimization1" role="tab" data-toggle="tab">optimization 1</a>
+                <a class="nav-link active" href="#optimization1" role="tab" data-toggle="tab">Szenario 1</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#optimization2" role="tab" data-toggle="tab">optimization 2</a>
+                <a class="nav-link" href="#optimization2" role="tab" data-toggle="tab">Szenario 2</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#optimization3" role="tab" data-toggle="tab">optimization 3</a>
+                <a class="nav-link" href="#optimization3" role="tab" data-toggle="tab">Szenario 3</a>
             </li>
         </ul>
 
         <!-- Optimization Plots -->
-        <div class="tab-content">
+        <div class="tab-content my-5 mx-5">
             <div role="tabpanel" class="tab-pane fade in active" id="optimization1">
                 <div id="unoptimized1" class="my-5"></div>
+                <!--
                 <div class="mx-5">
                     <p id="sumSupplyUnoptimized" class="my-0"></p>
                     <p id="sumStaticLoadUnoptimized" class="my-0"></p>
                     <p id="sumAcDemandUnoptimized" class="my-0"></p>
                     <p id="sumClDemandUnoptimized" class="my-0"></p>
                 </div>
+                -->
                 <button type="button" class="btn btn-primary ml-5 w-25 my-5" onclick="plotOptimized1()">Optimize</button>
-                <div id="optimized" class="my-5"></div>
+                <div id="optimized1" class="my-5"></div>
+                <!--
                 <div class="mx-5">
                     <p id="sumSupplyOptimized" class="my-0"></p>
                     <p id="sumStaticLoadOptimized" class="my-0"></p>
                     <p id="sumAcDemandOptimized" class="my-0"></p>
                     <p id="sumClDemandOptimized" class="my-0"></p>
                 </div>
+                -->
             </div>
             <div role="tabpanel" class="tab-pane fade in active" id="optimization2">
                 <div id="unoptimized2" class="my-5"></div>
+                <!--
                 <div class="mx-5">
                     <p id="sumSupplyUnoptimized" class="my-0"></p>
                     <p id="sumStaticLoadUnoptimized" class="my-0"></p>
                     <p id="sumAcDemandUnoptimized" class="my-0"></p>
                     <p id="sumClDemandUnoptimized" class="my-0"></p>
                 </div>
+                -->
                 <button type="button" class="btn btn-primary ml-5 w-25 my-5" onclick="plotOptimized2()">Optimize</button>
                 <div id="optimized2" class="my-5"></div>
+                <!--
                 <div class="mx-5">
                     <p id="sumSupplyOptimized" class="my-0"></p>
                     <p id="sumStaticLoadOptimized" class="my-0"></p>
                     <p id="sumAcDemandOptimized" class="my-0"></p>
                     <p id="sumClDemandOptimized" class="my-0"></p>
                 </div>
+                -->
             </div>
             <div role="tabpanel" class="tab-pane fade in active" id="optimization3">
                 <div id="unoptimized3" class="my-5"></div>
+                <!--
                 <div class="mx-5">
                     <p id="sumSupplyUnoptimized" class="my-0"></p>
                     <p id="sumStaticLoadUnoptimized" class="my-0"></p>
                     <p id="sumAcDemandUnoptimized" class="my-0"></p>
                     <p id="sumClDemandUnoptimized" class="my-0"></p>
                 </div>
+                -->
                 <button type="button" class="btn btn-primary ml-5 w-25 my-5" onclick="plotOptimized3()">Optimize</button>
-                <div id="optimize3" class="my-5"></div>
+                <div id="optimized3" class="my-5"></div>
+                <!--
                 <div class="mx-5">
                     <p id="sumSupplyOptimized" class="my-0"></p>
                     <p id="sumStaticLoadOptimized" class="my-0"></p>
                     <p id="sumAcDemandOptimized" class="my-0"></p>
                     <p id="sumClDemandOptimized" class="my-0"></p>
                 </div>
+                -->
             </div>
 
         </div>
