@@ -9,17 +9,17 @@ http.globalAgent.maxSockets = Infinity;
 // server
 // -----------------------------------------------
 // port
-var port = process.env.SERVER_PORT || config.api.ports.dev;
-if (process.env.NODE_ENV !== 'production') {
-    port = process.env.SERVER_PORT || config.api.ports.prod;
+var port = process.env.SERVER_PORT || 3011;
+if (process.env.NODE_ENV === 'production') {
+    port = process.env.SERVER_PORT || 3010;
 }
 // http
 var server = http.createServer(app);
 server.listen(port);
 console.log("server is running on port: " + port);
-if (process.env.NODE_ENV === 'development') {
-    console.log('developer mode');
+if (process.env.NODE_ENV === 'production') {
+    console.log('production mode');
 }
 else {
-    console.log('production mode');
+    console.log('developer mode');
 }

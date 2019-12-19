@@ -1,6 +1,6 @@
-export const api = {
-    ports: {
-        prod: 3010,
-        dev: 3011
+export const optimization = {
+    roundingDemands : {
+        direction: 'up',
+        to: 200
     }
 }

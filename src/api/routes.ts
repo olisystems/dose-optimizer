@@ -11,26 +11,6 @@ const router = express.Router();
 
 
 
-// GET
-// -----------------------------------------------
-
-router.get('/', (req, res, next) => {
-
-    controlers.getOptimizationInfo( 
-        ( optimizationRes: IResponseObject ) : void => {
-
-            if (optimizationRes.status === 200 ) {
-                
-                res.status(optimizationRes.status).json(optimizationRes.data)
-            } else {
-                
-                res.status(optimizationRes.status).json( {errors: [errors.internalServer]} )
-            }
-        }
-    );
-});
-
-
 // POST
 // -----------------------------------------------
 
