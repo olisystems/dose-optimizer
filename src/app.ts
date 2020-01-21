@@ -6,6 +6,12 @@ import express = require('express');
 import morgan = require('morgan');
 import bodyParser = require('body-parser');
 import compression = require('compression'); 
+import session = require('express-session');
+import Keycloak = require('keycloak-connect');
+
+//​var session = require('express-session');
+//​var Keycloak = require('keycloak-connect');
+
 const routes = require('./api/routes');
 
 const app: express.Application = express();
@@ -21,6 +27,26 @@ if (process.env.NODE_ENV !== 'production') {
     console.log('in dev');
     app.use(morgan("dev"));
 } 
+
+// include keycloak
+var memoryStore = new session.MemoryStore();
+
+app.use(session({
+  secret: 'some secret',
+  resave: false,
+  saveUninitialized: true,
+  store: memoryStore
+}));
+
+var keycloak = new Keycloak({
+  store: memoryStore
+});
+
+app.use(keycloak.middleware({
+  logout: '/logout',
+  admin: '/'
+}));
+
 
 // parse response bodies
 app.use(bodyParser.urlencoded({
