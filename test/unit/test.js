@@ -104,11 +104,35 @@ describe('Scenario 1', function() {
                     console.log(error);
                 }
 
-                let optimized = body[0];    
-
-                //TODO: test if optimized ac and cl values are in in the optimization ranges 
-                expect(sumUnoptiClDemand).to.deep.equal(sumOptiClDemand, 'sum of unoptimized and optimized clDemand values are the same');
+                var optimization = body[0];    
+                var startClRange = Math.min(...optimizationFeed.clTimeRange);
+                var startAcRange = Math.min(...optimizationFeed.acTimeRange);
+                let endAcRange = Math.max(...optimizationFeed.acTimeRange);
+                let endClRange = Math.max(...optimizationFeed.clTimeRange);
+                var startClOptimizationInterval = optimization.clDemand.value.findIndex(function(number) {return number > 0;}) + 1;
+                var startAcOptimizationInterval = optimization.acDemand.value.findIndex(function(number) {return number > 0;}) + 1;
+                var endClOptimizationInterval;
+                var endAcOptimizationInterval;
                 
+                for (i = optimization.clDemand.value.length - 1; i >= 0; i--) {
+                    if (optimization.clDemand.value[i] > 0) {
+                        endClOptimizationInterval = i + 1;
+                        break;
+                    }
+                }
+                
+                for (i = optimization.acDemand.value.length - 1; i >= 0; i--) {
+                    if (optimization.acDemand.value[i] > 0) {
+                        endAcOptimizationInterval = i + 1;
+                        break;
+                    }
+                }
+
+                assert(startClOptimizationInterval >= startClRange, 'in correct start interval for cl optimization');
+                assert(startAcOptimizationInterval >= startAcRange, 'in correct start interval for ac optimization');
+                assert(endClOptimizationInterval <= endClRange, 'in correct end interval for cl optimization');
+                assert(endAcOptimizationInterval <= endAcRange, 'in correct end interval for ac optimization');
+
                 done();
             })
         });
@@ -187,6 +211,9 @@ describe('Scenario 2', function() {
                 sumOptiAcDemand =  optimized.acDemand.value.reduce(reducer);
                 sumUnoptiClDemand =  optimizationFeed.clDemand.value.reduce(reducer);
                 sumOptiClDemand =  optimized.clDemand.value.reduce(reducer);
+
+                console.log(sumUnoptiClDemand);
+                console.log(sumOptiClDemand);
                 
                 expect(optimized.acTimeRange).to.deep.equal(optimizationFeed.acTimeRange, 'unoptimized and optimized acTimeRange values are the same');
                 expect(optimized.clTimeRange).to.deep.equal(optimizationFeed.clTimeRange, 'unoptimized and optimized clTimeRange values are the same');
@@ -197,6 +224,47 @@ describe('Scenario 2', function() {
                 expect(sumUnoptiAcDemand).to.deep.equal(sumOptiAcDemand, 'sum of unoptimized and optimized acDemand values are the same');
                 //expect(sumUnoptiClDemand).to.deep.equal(sumOptiClDemand, 'sum of unoptimized and optimized clDemand values are the same');
                 
+                done();
+            })
+        });
+
+        it('Rules', function(done) {
+            
+            request.post(url, { json: [optimizationFeed] }, function(error, response, body) {
+                
+                if (error) {
+                    console.log(error);
+                }
+
+                var optimization = body[0];    
+                var startClRange = Math.min(...optimizationFeed.clTimeRange);
+                var startAcRange = Math.min(...optimizationFeed.acTimeRange);
+                let endAcRange = Math.max(...optimizationFeed.acTimeRange);
+                let endClRange = Math.max(...optimizationFeed.clTimeRange);
+                var startClOptimizationInterval = optimization.clDemand.value.findIndex(function(number) {return number > 0;}) + 1;
+                var startAcOptimizationInterval = optimization.acDemand.value.findIndex(function(number) {return number > 0;}) + 1;
+                var endClOptimizationInterval;
+                var endAcOptimizationInterval;
+                
+                for (i = optimization.clDemand.value.length - 1; i >= 0; i--) {
+                    if (optimization.clDemand.value[i] > 0) {
+                        endClOptimizationInterval = i + 1;
+                        break;
+                    }
+                }
+                
+                for (i = optimization.acDemand.value.length - 1; i >= 0; i--) {
+                    if (optimization.acDemand.value[i] > 0) {
+                        endAcOptimizationInterval = i + 1;
+                        break;
+                    }
+                }
+
+                assert(startClOptimizationInterval >= startClRange, 'in correct start interval for cl optimization');
+                assert(startAcOptimizationInterval >= startAcRange, 'in correct start interval for ac optimization');
+                assert(endClOptimizationInterval <= endClRange, 'in correct end interval for cl optimization');
+                assert(endAcOptimizationInterval <= endAcRange, 'in correct end interval for ac optimization');
+
                 done();
             })
         });
@@ -276,6 +344,9 @@ describe('Scenario 3', function() {
                 sumUnoptiClDemand =  optimizationFeed.clDemand.value.reduce(reducer);
                 sumOptiClDemand =  optimized.clDemand.value.reduce(reducer);
                 
+                console.log(sumUnoptiClDemand);
+                console.log(sumOptiClDemand);
+                
                 expect(optimized.acTimeRange).to.deep.equal(optimizationFeed.acTimeRange, 'unoptimized and optimized acTimeRange values are the same');
                 expect(optimized.clTimeRange).to.deep.equal(optimizationFeed.clTimeRange, 'unoptimized and optimized clTimeRange values are the same');
                 expect(optimized.acMaxLoad).to.deep.equal(optimizationFeed.acMaxLoad, 'unoptimized and optimized acMaxLoad values are the same');
@@ -285,6 +356,47 @@ describe('Scenario 3', function() {
                 expect(sumUnoptiAcDemand).to.deep.equal(sumOptiAcDemand, 'sum of unoptimized and optimized acDemand values are the same');
                 //expect(sumUnoptiClDemand).to.deep.equal(sumOptiClDemand, 'sum of unoptimized and optimized clDemand values are the same');
                 
+                done();
+            })
+        });
+
+        it('Rules', function(done) {
+            
+            request.post(url, { json: [optimizationFeed] }, function(error, response, body) {
+                
+                if (error) {
+                    console.log(error);
+                }
+
+                var optimization = body[0];    
+                var startClRange = Math.min(...optimizationFeed.clTimeRange);
+                var startAcRange = Math.min(...optimizationFeed.acTimeRange);
+                let endAcRange = Math.max(...optimizationFeed.acTimeRange);
+                let endClRange = Math.max(...optimizationFeed.clTimeRange);
+                var startClOptimizationInterval = optimization.clDemand.value.findIndex(function(number) {return number > 0;}) + 1;
+                var startAcOptimizationInterval = optimization.acDemand.value.findIndex(function(number) {return number > 0;}) + 1;
+                var endClOptimizationInterval;
+                var endAcOptimizationInterval;
+                
+                for (i = optimization.clDemand.value.length - 1; i >= 0; i--) {
+                    if (optimization.clDemand.value[i] > 0) {
+                        endClOptimizationInterval = i + 1;
+                        break;
+                    }
+                }
+                
+                for (i = optimization.acDemand.value.length - 1; i >= 0; i--) {
+                    if (optimization.acDemand.value[i] > 0) {
+                        endAcOptimizationInterval = i + 1;
+                        break;
+                    }
+                }
+
+                assert(startClOptimizationInterval >= startClRange, 'in correct start interval for cl optimization');
+                assert(startAcOptimizationInterval >= startAcRange, 'in correct start interval for ac optimization');
+                assert(endClOptimizationInterval <= endClRange, 'in correct end interval for cl optimization');
+                assert(endAcOptimizationInterval <= endAcRange, 'in correct end interval for ac optimization');
+
                 done();
             })
         });

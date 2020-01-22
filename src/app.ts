@@ -78,7 +78,7 @@ app.use((req, res, next) => {
 // -----------------------------------------------
 
 // TODO: Remove for production version
-app.use('/', express.static('./test/optimization-plots'));
+app.use('/test', express.static('./test/optimization-plots'));
 
 
 
