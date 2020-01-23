@@ -60,7 +60,7 @@ Der Service lässt sich über eine REST API ansteurn über folgende parameter ei
 Der Service muss gestartet werden bevor dieser getestet werden kann. Der Optimierungsalgorithmus kann auf zwei Arten getestet werden.
 
 ### Visuelle Tests
-Die Virtuell Tests werden im Webbrowser durch das aufrufen folgender URL:  http://<host>:<port>/test durchgeführt. Als Host und Port müssen die bei der Installation verwendeten Werte verwendet werden. Zuvor müssen allerdings noch die Konfigurationen für den Host und den Port auch in der Datei test/optimization-plots/main.js in den Zeilen 5 und 6 angepasst werden.  
+Die Virtuell Tests werden im Webbrowser durch das aufrufen folgender URL:  http://<host>:<port>/test durchgeführt. Als Host und Port müssen die bei der Installation verwendeten Werte verwendet werden. Zuvor müssen allerdings noch die Konfigurationen für den Host und den Port in der Datei test/optimization-plots/config.js angepasst werden.  
 
 Die geladene Seite beinhaltet drei Testszenarien die über Registerkarten auswählbar sind. Jede Registerkarte beinhaltet einen Graphen der unoptimierte Testdaten beinhaltet. Die Daten des Graphs werden in der Legende rechts neben dem Graphen beschreiben. Unter den unoptimierten Graphen gibt es einen Button „Optimize“. Wird dieser Button gedrückt, dann erscheint darunter ein neuer Graph, der die Ergebnisse der Optimierung darstellt. Bewegt man sich mit dem Mauszeiger über die Graphen, dann werden dessen Werte in Form von Tooltips angezeigt.
 

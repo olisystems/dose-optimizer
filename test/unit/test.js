@@ -80,9 +80,6 @@ describe('Scenario 1', function() {
                 sumUnoptiClDemand =  optimizationFeed.clDemand.value.reduce(reducer);
                 sumOptiClDemand =  optimized.clDemand.value.reduce(reducer);
                 
-                console.log(sumUnoptiClDemand);
-                console.log(sumOptiClDemand);
-                
                 expect(optimized.acTimeRange).to.deep.equal(optimizationFeed.acTimeRange, 'unoptimized and optimized acTimeRange values are the same');
                 expect(optimized.clTimeRange).to.deep.equal(optimizationFeed.clTimeRange, 'unoptimized and optimized clTimeRange values are the same');
                 expect(optimized.acMaxLoad).to.deep.equal(optimizationFeed.acMaxLoad, 'unoptimized and optimized acMaxLoad values are the same');
@@ -90,7 +87,7 @@ describe('Scenario 1', function() {
                 expect(sumUnoptiSupply).to.deep.equal(sumOptiSupply, 'sum of unoptimized and optimized supply values are the same');
                 expect(sumUnoptiLoadStatic).to.deep.equal(sumOptiLoadStatic, 'sum of unoptimized and optimized loadStatic values are the same');
                 expect(sumUnoptiAcDemand).to.deep.equal(sumOptiAcDemand, 'sum of unoptimized and optimized acDemand values are the same');
-                //expect(sumUnoptiClDemand).to.deep.equal(sumOptiClDemand, 'sum of unoptimized and optimized clDemand values are the same');
+                expect(sumUnoptiClDemand).to.deep.equal(sumOptiClDemand, 'sum of unoptimized and optimized clDemand values are the same');
                 
                 done();
             })
@@ -212,9 +209,6 @@ describe('Scenario 2', function() {
                 sumUnoptiClDemand =  optimizationFeed.clDemand.value.reduce(reducer);
                 sumOptiClDemand =  optimized.clDemand.value.reduce(reducer);
 
-                console.log(sumUnoptiClDemand);
-                console.log(sumOptiClDemand);
-                
                 expect(optimized.acTimeRange).to.deep.equal(optimizationFeed.acTimeRange, 'unoptimized and optimized acTimeRange values are the same');
                 expect(optimized.clTimeRange).to.deep.equal(optimizationFeed.clTimeRange, 'unoptimized and optimized clTimeRange values are the same');
                 expect(optimized.acMaxLoad).to.deep.equal(optimizationFeed.acMaxLoad, 'unoptimized and optimized acMaxLoad values are the same');
@@ -222,7 +216,7 @@ describe('Scenario 2', function() {
                 expect(sumUnoptiSupply).to.deep.equal(sumOptiSupply, 'sum of unoptimized and optimized supply values are the same');
                 expect(sumUnoptiLoadStatic).to.deep.equal(sumOptiLoadStatic, 'sum of unoptimized and optimized loadStatic values are the same');
                 expect(sumUnoptiAcDemand).to.deep.equal(sumOptiAcDemand, 'sum of unoptimized and optimized acDemand values are the same');
-                //expect(sumUnoptiClDemand).to.deep.equal(sumOptiClDemand, 'sum of unoptimized and optimized clDemand values are the same');
+                expect(sumUnoptiClDemand).to.deep.equal(sumOptiClDemand, 'sum of unoptimized and optimized clDemand values are the same');
                 
                 done();
             })
@@ -344,9 +338,6 @@ describe('Scenario 3', function() {
                 sumUnoptiClDemand =  optimizationFeed.clDemand.value.reduce(reducer);
                 sumOptiClDemand =  optimized.clDemand.value.reduce(reducer);
                 
-                console.log(sumUnoptiClDemand);
-                console.log(sumOptiClDemand);
-                
                 expect(optimized.acTimeRange).to.deep.equal(optimizationFeed.acTimeRange, 'unoptimized and optimized acTimeRange values are the same');
                 expect(optimized.clTimeRange).to.deep.equal(optimizationFeed.clTimeRange, 'unoptimized and optimized clTimeRange values are the same');
                 expect(optimized.acMaxLoad).to.deep.equal(optimizationFeed.acMaxLoad, 'unoptimized and optimized acMaxLoad values are the same');
@@ -354,7 +345,7 @@ describe('Scenario 3', function() {
                 expect(sumUnoptiSupply).to.deep.equal(sumOptiSupply, 'sum of unoptimized and optimized supply values are the same');
                 expect(sumUnoptiLoadStatic).to.deep.equal(sumOptiLoadStatic, 'sum of unoptimized and optimized loadStatic values are the same');
                 expect(sumUnoptiAcDemand).to.deep.equal(sumOptiAcDemand, 'sum of unoptimized and optimized acDemand values are the same');
-                //expect(sumUnoptiClDemand).to.deep.equal(sumOptiClDemand, 'sum of unoptimized and optimized clDemand values are the same');
+                expect(sumUnoptiClDemand).to.deep.equal(sumOptiClDemand, 'sum of unoptimized and optimized clDemand values are the same');
                 
                 done();
             })

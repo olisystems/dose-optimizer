@@ -104,7 +104,6 @@ export class Optimizer {
 
         var deletedExceedingDemands: number[] = deletedExceedingDemands;
         var deleteAmount: number;
-
         // sum up static load and demand
         var loadSum = loadStatic.map(function (loadSum, index) {
             return loadSum + demand[index];
@@ -118,17 +117,17 @@ export class Optimizer {
                 
                 if (loadStatic[index] > supply[index]) {
 
-                    deleteAmount += demand[index];
+                    deleteAmount = demand[index];
                 } else {
 
-                    deleteAmount += (loadSum[index] - supplyValue);
+                    deleteAmount = (loadSum[index] - supplyValue);
                 }
 
                 deletedExceedingDemands[index] -= deleteAmount; 
-
             }
-        });
 
+        });
+        
         return deletedExceedingDemands;
     }
 
@@ -257,7 +256,7 @@ export class Optimizer {
             
             // delete rest from optimizedDemandValues
             optimizedDemandValues = this.deleteExceedingDemand(supplyValues, loadValues, optimizedDemandValues, optimizedDemandValues);
-
+            
             // distribute the rest
             var i: number = this._clStartInterval
             while (sumOfExceedingDemand > 0) {
