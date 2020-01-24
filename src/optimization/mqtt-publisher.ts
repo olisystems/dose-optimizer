@@ -23,7 +23,10 @@ export class MqttPublisher {
 
             console.log('mqtt is connected in class');
             setInterval(() => { 
-                this._client.publish('DOSE/test', '{"key1": "val1", "key2": "val2"}');     
+                
+                console.log('publish: ' + topic);
+                console.log(data);
+                this._client.publish(topic, data);     
             }, 5000);
 
         });

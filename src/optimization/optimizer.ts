@@ -289,7 +289,7 @@ export class Optimizer {
     public publishOptimization () {
 
         var publisher: MqttPublisher = new MqttPublisher();
-        publisher.publish('myTestTopic', '{"key1": "val1", "key2": "val2"}');
+        publisher.publish('myTestTopic', '{"key1": "val1", "key2": "val2", "key3": "val3"}');
     }
 
 }
