@@ -10,7 +10,7 @@ var session = require("express-session");
 var Keycloak = require("keycloak-connect");
 //​var session = require('express-session');
 //​var Keycloak = require('keycloak-connect');
-var routes = require('./api/routes');
+var routes = require('./api/rest/routes');
 var app = express();
 // app setups
 // -----------------------------------------------
@@ -55,7 +55,7 @@ app.use(function (req, res, next) {
 // test website for optoimization-plots
 // -----------------------------------------------
 // TODO: Remove for production version
-app.use('/', express.static('./test/optimization-plots'));
+app.use('/test', express.static('./test/optimization-plots'));
 // request routes
 // -----------------------------------------------
 app.use('/v1', routes);

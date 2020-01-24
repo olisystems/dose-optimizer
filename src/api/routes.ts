@@ -3,12 +3,12 @@
 // -----------------------------------------------
 
 import express = require('express');
-import { IResponseObject } from '../../data-models/callback';
+import { IResponseObject } from '../data-models/callback';
 import session = require('express-session');
 import Keycloak = require('keycloak-connect');
 
 const controlers = require('./controllers');
-const errors: any = require('../../assets/responses/errors.json');
+const errors: any = require('../assets/responses/errors.json');
 
 const router = express.Router();
 

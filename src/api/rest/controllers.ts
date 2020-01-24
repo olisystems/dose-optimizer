@@ -2,8 +2,8 @@
 // imports and constants
 // -----------------------------------------------
 
-import { Optimizer } from '../optimization/optimizer'
-import { IResponseCallback, IResponseObject } from '../data-models/callback';
+import { Optimizer } from '../../optimization/optimizer'
+import { IResponseCallback, IResponseObject } from '../../data-models/callback';
 
 
 

@@ -7,7 +7,7 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
     return r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var mqtt_publisher_1 = require("./mqtt-publisher");
+var mqtt_publisher_1 = require("../api/mqtt/mqtt-publisher");
 var Optimizer = /** @class */ (function () {
     // constructor
     function Optimizer(optimizatoinFeed) {
@@ -75,10 +75,10 @@ var Optimizer = /** @class */ (function () {
         supply.forEach(function (supplyValue, index) {
             if (((supplyValue - loadSum[index]) < 0) && (demand[index] > 0)) {
                 if (loadStatic[index] > supply[index]) {
-                    deleteAmount += demand[index];
+                    deleteAmount = demand[index];
                 }
                 else {
-                    deleteAmount += (loadSum[index] - supplyValue);
+                    deleteAmount = (loadSum[index] - supplyValue);
                 }
                 deletedExceedingDemands[index] -= deleteAmount;
             }
@@ -202,7 +202,7 @@ var Optimizer = /** @class */ (function () {
     };
     Optimizer.prototype.publishOptimization = function () {
         var publisher = new mqtt_publisher_1.MqttPublisher();
-        publisher.publish('myTopic', '{"key1": "val1", "key2": "val2"}');
+        publisher.publish('myTestTopic', '{"key1": "val1", "key2": "val2", "key3": "val3"}');
     };
     return Optimizer;
 }());

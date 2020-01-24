@@ -12,7 +12,7 @@ import Keycloak = require('keycloak-connect');
 //​var session = require('express-session');
 //​var Keycloak = require('keycloak-connect');
 
-const routes = require('./api/routes');
+const routes = require('./api/rest/routes');
 
 const app: express.Application = express();
 

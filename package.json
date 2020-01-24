@@ -5,6 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "mocha './test/unit/test.js'",
+    "test-performance": "mocha './test/unit/performance-test.js'",
     "build": "tsc && mkdir -p dist/assets && cp -r src/assets/* dist/assets",
     "dev": "ts-node-dev --respawn --transpileOnly ./src/server.ts",
     "start:prod": "pm2 start ./dist/server.js",
@@ -19,6 +20,7 @@
     "@types/express-session": "^1.15.16",
     "@types/keycloak-connect": "^4.5.1",
     "@types/morgan": "^1.7.37",
+    "axios": "^0.19.2",
     "compression": "^1.7.4",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",

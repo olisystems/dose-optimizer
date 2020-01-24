@@ -1,6 +1,6 @@
 
 import { IOptimizationFeed } from '../data-models/energy-profile';
-import { MqttPublisher } from "./mqtt-publisher";
+import { MqttPublisher } from "../api/mqtt/mqtt-publisher";
 
 export class Optimizer {
 
