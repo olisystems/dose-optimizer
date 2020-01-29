@@ -202,7 +202,9 @@ var Optimizer = /** @class */ (function () {
     };
     Optimizer.prototype.publishOptimization = function () {
         var publisher = new mqtt_publisher_1.MqttPublisher();
-        publisher.publish('myTestTopic', '{"key1": "val1", "key2": "val2", "key3": "val3"}');
+        for (var i = 1; i < 2; i++) {
+            publisher.publish('DOSE/OLI_34/ChargingStation/setOutputLimit', '{"key1": "val1", "key2": "val2", "key3": "val3"}');
+        }
     };
     return Optimizer;
 }());

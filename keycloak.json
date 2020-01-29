@@ -1,8 +1,9 @@
+
 {
-    "realm": "opti",
-    "auth-server-url": "http://localhost:8080/auth/",
+    "realm": "oli",
+    "bearer-only": true,
+    "auth-server-url": "http://localhost:8080/auth",
     "ssl-required": "external",
-    "resource": "member",
-    "public-client": true,
+    "resource": "tutorial-backend",
     "confidential-port": 0
 }

@@ -8,39 +8,34 @@ var bodyParser = require("body-parser");
 var compression = require("compression");
 var session = require("express-session");
 var Keycloak = require("keycloak-connect");
-//​var session = require('express-session');
-//​var Keycloak = require('keycloak-connect');
+var config_1 = require("./config");
 var routes = require('./api/rest/routes');
-var app = express();
 // app setups
 // -----------------------------------------------
-// console logs
+// express
+var app = express();
+// env
 app.get('env');
 if (process.env.NODE_ENV !== 'production') {
-    console.log('in dev');
+    console.log('dev mode');
     app.use(morgan("dev"));
 }
-// include keycloak
+// keycloak
 var memoryStore = new session.MemoryStore();
+var keycloak = new Keycloak({ store: memoryStore });
 app.use(session({
-    secret: 'some secret',
+    secret: config_1.config.keycloak.secret,
     resave: false,
     saveUninitialized: true,
     store: memoryStore
 }));
-var keycloak = new Keycloak({
-    store: memoryStore
-});
-app.use(keycloak.middleware({
-    logout: '/logout',
-    admin: '/'
-}));
+app.use(keycloak.middleware());
 // parse response bodies
 app.use(bodyParser.urlencoded({
     extended: true
 }));
 app.use(bodyParser.json());
-// compress response bodies 
+// compression
 app.use(compression());
 // cors configurations
 app.use(function (req, res, next) {
@@ -53,14 +48,11 @@ app.use(function (req, res, next) {
     next();
 });
 // test website for optoimization-plots
-// -----------------------------------------------
 // TODO: Remove for production version
 app.use('/test', express.static('./test/optimization-plots'));
 // request routes
-// -----------------------------------------------
 app.use('/v1', routes);
 // errors
-// -----------------------------------------------
 app.use(function (req, res, next) {
     var error = new Error("Not found");
     res.status(404).json({

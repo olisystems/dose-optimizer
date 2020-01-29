@@ -10,6 +10,10 @@ import { IResponseCallback, IResponseObject } from '../../data-models/callback';
 // POST
 // -----------------------------------------------
 
+/**
+ * @param {any} req                     - request
+ * @param {IResponseCallback} callback  - callback according to interface IResponseCallback
+ */
 function optimize(req: any, callback: IResponseCallback ) : void {
 
     var optimizer = new Optimizer(

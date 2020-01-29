@@ -6,6 +6,7 @@ import express = require('express');
 import { IResponseObject } from '../../data-models/callback';
 import session = require('express-session');
 import Keycloak = require('keycloak-connect');
+import { config } from '../../config';
 
 const controlers = require('./controllers');
 const errors: any = require('../../assets/responses/errors.json');
@@ -20,12 +21,11 @@ var keycloak = new Keycloak({ store: memoryStore });
 // POST
 // -----------------------------------------------
 
-
 /** 
- * Productive route
+ * Optimization Route
  * protected 
  */
-router.post('/', /* keycloak.protect('usr'), */ (req, res, next) => {
+router.post('/', keycloak.protect(config.keycloak.role), (req, res) => {
 
     controlers.optimize( 
         req.body,
@@ -40,6 +40,12 @@ router.post('/', /* keycloak.protect('usr'), */ (req, res, next) => {
             }  
         }
     );
+});
+
+
+router.post('/test', keycloak.protect(config.keycloak.role), (req, res) => {
+
+    res.status(200).json({origin: 'test rout', secured: true})
 });
 
 

@@ -8,44 +8,39 @@ import bodyParser = require('body-parser');
 import compression = require('compression'); 
 import session = require('express-session');
 import Keycloak = require('keycloak-connect');
-
-//​var session = require('express-session');
-//​var Keycloak = require('keycloak-connect');
+import {config} from './config';
 
 const routes = require('./api/rest/routes');
-
-const app: express.Application = express();
 
 
 
 // app setups
 // -----------------------------------------------
 
-// console logs
+// express
+const app: express.Application = express();
+
+
+// env
 app.get('env');
 if (process.env.NODE_ENV !== 'production') {
-    console.log('in dev');
+    console.log('dev mode');
     app.use(morgan("dev"));
 } 
 
-// include keycloak
-var memoryStore = new session.MemoryStore();
+
+// keycloak
+var memoryStore = new session.MemoryStore();                       
+var keycloak = new Keycloak({ store: memoryStore });
 
 app.use(session({
-  secret: 'some secret',
-  resave: false,
-  saveUninitialized: true,
-  store: memoryStore
+    secret: config.keycloak.secret,                         
+    resave: false,                         
+    saveUninitialized: true,                         
+    store: memoryStore                       
 }));
 
-var keycloak = new Keycloak({
-  store: memoryStore
-});
-
-app.use(keycloak.middleware({
-  logout: '/logout',
-  admin: '/'
-}));
+app.use(keycloak.middleware());
 
 
 // parse response bodies
@@ -54,8 +49,10 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
-// compress response bodies 
+
+// compression
 app.use(compression());
+
 
 // cors configurations
 app.use((req, res, next) => {
@@ -73,25 +70,16 @@ app.use((req, res, next) => {
 });
 
 
-
 // test website for optoimization-plots
-// -----------------------------------------------
-
 // TODO: Remove for production version
 app.use('/test', express.static('./test/optimization-plots'));
 
 
-
 // request routes
-// -----------------------------------------------
-
 app.use('/v1', routes);
 
 
-
 // errors
-// -----------------------------------------------
-
 app.use((req, res, next) => {
     
     const error = new Error("Not found");

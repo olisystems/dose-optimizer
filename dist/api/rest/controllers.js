@@ -5,6 +5,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var optimizer_1 = require("../../optimization/optimizer");
 // POST
 // -----------------------------------------------
+/**
+ * @param {any} req                     - request
+ * @param {IResponseCallback} callback  - callback according to interface IResponseCallback
+ */
 function optimize(req, callback) {
     var optimizer = new optimizer_1.Optimizer({
         supply: req[0].supply,
@@ -22,7 +26,7 @@ function optimize(req, callback) {
             optimizer.getOptimization()
         ]
     };
-    //optimizer.publishOptimization();
+    optimizer.publishOptimization();
     callback(controllerRes);
 }
 // exports
