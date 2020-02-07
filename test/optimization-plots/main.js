@@ -1,4 +1,6 @@
 
+var graphWidht = document.getElementById('unoptimized1').clientWidth;
+
 // run plots
 // ---------------------------------------------------------
 
@@ -167,12 +169,16 @@ async function plotUnoptimized(optimizationFeed, unoptimizedDivId) {
             }
         }
     };
-
+    
     // plot graph
     Plotly.newPlot(unoptimizedDivId, data, layout, {
         showSendToCloud: true
     });
 
+    Plotly.relayout(unoptimizedDivId, {   width: graphWidht })
+
+
+    /*
     // plot summed values
     document.getElementById("sumSupplyUnoptimized").innerHTML = 'sum supply: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + optimizationData.supply.value.reduce(sumArrayElements);
     document.getElementById("sumStaticLoadUnoptimized").innerHTML = 'sum static load: &nbsp;&nbsp;' + optimizationData.loadStatic.value.reduce(sumArrayElements);
@@ -182,6 +188,7 @@ async function plotUnoptimized(optimizationFeed, unoptimizedDivId) {
     function sumArrayElements(total, num) {
         return total + num;
     }
+    */
 
 }
 

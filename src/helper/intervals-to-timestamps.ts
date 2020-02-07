@@ -21,19 +21,15 @@ export class IntervalsToTimestamps {
     public createTimestamps(date: Date) {
         
         var startTime: number  =  date.getTime() - (config.gmtTimeZone * 60 * 60 * 1000);
-        //console.log(startTime);
 
         var calcFreq: number = (60 * 60 * 24 * 1000) / (config.optimizationFrequency * 60 * 1000);
-        var cnt: number = 0;
+
         for (var i: number = 1; i <= calcFreq; i++) {
-            cnt += 1;
-            //console.log(cnt);
+
             this._IntervalTimestamps.push(startTime);
             startTime += ( config.optimizationFrequency * 60 * 1000);
         }
 
-        console.log(this._IntervalTimestamps)
-        
+        // console.log(this._IntervalTimestamps)
     }
-
 }

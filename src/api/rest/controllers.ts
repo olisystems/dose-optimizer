@@ -14,7 +14,7 @@ import { IResponseCallback, IResponseObject } from '../../data-models/callback';
  * @param {any} req                     - request
  * @param {IResponseCallback} callback  - callback according to interface IResponseCallback
  */
-function optimize(req: any, callback: IResponseCallback ) : void {
+async function optimize(req: any, callback: IResponseCallback ) : void {
 
     var optimizer = new Optimizer(
         {
@@ -29,14 +29,20 @@ function optimize(req: any, callback: IResponseCallback ) : void {
         }
     );
     
+    var optimization = optimizer.getOptimization();
+
     var controllerRes: IResponseObject = {
         status: 200,
         data: [
-            optimizer.getOptimization()
+            optimization
         ]
     }
 
-    optimizer.publishOptimization();
+    // TODO: outsource the publishing process
+    // optimizer.publishOptimization();
+
+    // TODO: 
+    // write optimization in database
 
     callback( controllerRes )
 }

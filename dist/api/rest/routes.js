@@ -17,7 +17,7 @@ var keycloak = new Keycloak({ store: memoryStore });
  * Optimization Route
  * protected
  */
-router.post('/', /* keycloak.protect('usr'), */ function (req, res) {
+router.post('/', keycloak.protect(config_1.config.keycloak.role), function (req, res) {
     controlers.optimize(req.body, function (optimizationRes) {
         if (optimizationRes.status === 200) {
             res.status(optimizationRes.status).json(optimizationRes.data);
