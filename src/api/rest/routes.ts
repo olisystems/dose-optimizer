@@ -3,7 +3,6 @@
 // -----------------------------------------------
 
 import express = require('express');
-import { IResponseObject } from '../../data-models/callback';
 import session = require('express-session');
 import Keycloak = require('keycloak-connect');
 import { config } from '../../config';
@@ -25,28 +24,27 @@ var keycloak = new Keycloak({ store: memoryStore });
  * Optimization Route
  * protected 
  */
-router.post('/', /*keycloak.protect(config.keycloak.role),*/ (req, res) => {
+router.post('/', /*keycloak.protect(config.keycloak.role),*/ async (req, res) => {
 
-    controlers.optimize( 
-        req.body,
-        ( optimizationRes: IResponseObject ) : void => {
+    var optimizationRes = await controlers.optimize(req.body);
 
-            if (optimizationRes.status === 200 ) {
+    if (optimizationRes.status === 200 ) {
                 
-                res.status(optimizationRes.status).json(optimizationRes.data)
-            } else {
-                
-                res.status(optimizationRes.status).json( {errors: [errors.internalServer]} )
-            }  
-        }
-    );
+        res.status(optimizationRes.status).json(optimizationRes.data)
+    } else {
+        
+        res.status(optimizationRes.status).json( {errors: [errors.internalServer]} )
+    }  
+
 });
 
 
-router.post('/test', keycloak.protect(config.keycloak.role), (req, res) => {
+router.get('/publish', /*keycloak.protect(config.keycloak.role),*/ async (req, res) => {
 
-    res.status(200).json({origin: 'test rout', secured: true})
+    controlers.publish(40);
+    res.status(200).json({ 'publisherStarted': true })
 });
+
 
 
 

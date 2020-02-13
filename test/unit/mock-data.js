@@ -1,5 +1,7 @@
 const optimizationFeeds = [
     {
+        tenant: 'OLI_1',
+        startDate: '2020-01-28"',
         supply: {
             oliBox: "OLI_33",
             type: "activeEnery",
@@ -36,6 +38,8 @@ const optimizationFeeds = [
         clMaxLoad: 2000
     },
     {
+        tenant: 'OLI_2',
+        startDate: '2019-01-28"',
         supply: {
             oliBox: "OLI_45",
             type: "activeEnery",
@@ -72,6 +76,8 @@ const optimizationFeeds = [
         clMaxLoad: 2000
     },
     {
+        tenant: 'OLI_3',
+        startDate: '2018-01-28"',
         supply: {
             oliBox: "OLI_63",
             type: "activeEnery",

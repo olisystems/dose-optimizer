@@ -3,7 +3,7 @@
 // -----------------------------------------------
 
 import { Optimizer } from '../../optimization/optimizer'
-import { IResponseCallback, IResponseObject } from '../../data-models/callback';
+const storeOptimization = require('../../db/optimization');
 
 
 
@@ -11,11 +11,13 @@ import { IResponseCallback, IResponseObject } from '../../data-models/callback';
 // -----------------------------------------------
 
 /**
- * @param {any} req                     - request
- * @param {IResponseCallback} callback  - callback according to interface IResponseCallback
+ * @param {any} req - request
  */
-async function optimize(req: any, callback: IResponseCallback ) : void {
+async function optimize(req: any ) {
 
+    var controllerRes: object;
+    var storeOptimizationRes: any; 
+    // TODO: outsource a function which creats the optimizer variable
     var optimizer = new Optimizer(
         {
             supply: req[0].supply,
@@ -31,21 +33,51 @@ async function optimize(req: any, callback: IResponseCallback ) : void {
     
     var optimization = optimizer.getOptimization();
 
-    var controllerRes: IResponseObject = {
-        status: 200,
-        data: [
-            optimization
-        ]
+    storeOptimizationRes = await storeOptimization.storeOptimization(req[0].tenant, req[0].startDate, optimization);
+    if (storeOptimizationRes.error) {
+        controllerRes = {
+            status: storeOptimizationRes.status,
+            error: storeOptimizationRes.error
+        }
+    } else {
+        controllerRes = {
+            status: storeOptimizationRes.status,
+            data: [
+                optimization
+            ]
+        }
     }
 
-    // TODO: outsource the publishing process
-    // optimizer.publishOptimization();
+    return new Promise ( (resolve) => {
 
-    // TODO: 
-    // write optimization in database
+        resolve(controllerRes)
+    })
 
-    callback( controllerRes )
 }
+
+
+
+
+// ------------------------------------------------------
+// TODO: remove this function
+var publishNo: number = 0;
+let publish: (i: number) => void = (i: number) => {
+    
+    publishNo += 1;
+
+    setTimeout(() => {
+
+        if (--i) {
+            
+            console.log('publishNo: ' + publishNo + ' -> ' + i);
+            publish(i);
+        }
+    }, 3000);
+
+};
+
+// ------------------------------------------------------
+
 
 
 
@@ -53,3 +85,4 @@ async function optimize(req: any, callback: IResponseCallback ) : void {
 // -----------------------------------------------
 
 module.exports.optimize = optimize;
+module.exports.publish = publish;

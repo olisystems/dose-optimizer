@@ -15,16 +15,12 @@ var IntervalsToTimestamps = /** @class */ (function () {
      */
     IntervalsToTimestamps.prototype.createTimestamps = function (date) {
         var startTime = date.getTime() - (config_1.config.gmtTimeZone * 60 * 60 * 1000);
-        //console.log(startTime);
         var calcFreq = (60 * 60 * 24 * 1000) / (config_1.config.optimizationFrequency * 60 * 1000);
-        var cnt = 0;
         for (var i = 1; i <= calcFreq; i++) {
-            cnt += 1;
-            //console.log(cnt);
             this._IntervalTimestamps.push(startTime);
             startTime += (config_1.config.optimizationFrequency * 60 * 1000);
         }
-        console.log(this._IntervalTimestamps);
+        // console.log(this._IntervalTimestamps)
     };
     return IntervalsToTimestamps;
 }());
