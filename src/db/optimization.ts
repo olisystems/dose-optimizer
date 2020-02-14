@@ -7,7 +7,7 @@ async function storeOptimization( tenant: string, startDate: string, optimizatio
     
     var res: object;
     var db: any; 
-    var queryString = 'INSERT INTO "optimizations" ("tenant", "start_date", "in_progress", "optimization") VALUES (?, ?, ?, ?)';
+    var queryString = 'INSERT INTO "optimizations" ("tenant", "start_date", "in_progress", "data") VALUES (?, ?, ?, ?)';
     
     return new Promise ( async  (resolve) => {
 
@@ -33,6 +33,7 @@ async function storeOptimization( tenant: string, startDate: string, optimizatio
 
         } catch (error) {
 
+            console.log(error)
             res = {
                 status: 500,
                 error: error

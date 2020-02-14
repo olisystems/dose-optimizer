@@ -2,10 +2,15 @@
 // imports and constants
 // -----------------------------------------------
 
-import { Optimizer } from '../../optimization/optimizer'
+import { Optimizer } from '../../optimization/optimizer';
+import { IOptimizationFeed } from '../../data-models/energy-profile';
 const storeOptimization = require('../../db/optimization');
+const constructOptimizationFeed = require('../../optimization/construct-optimization-feed');
 
-
+/*
+supplyId: "OLI_11",
+loadStaticId: "OLI_12",
+*/
 
 // POST
 // -----------------------------------------------
@@ -14,45 +19,65 @@ const storeOptimization = require('../../db/optimization');
  * @param {any} req - request
  */
 async function optimize(req: any ) {
-
-    var controllerRes: object;
-    var storeOptimizationRes: any; 
-    // TODO: outsource a function which creats the optimizer variable
-    var optimizer = new Optimizer(
-        {
-            supply: req[0].supply,
-            loadStatic: req[0].loadStatic,
-            acDemand: req[0].acDemand,
-            clDemand: req[0].clDemand,
-            acTimeRange: req[0].acTimeRange,
-            clTimeRange: req[0].clTimeRange,
-            acMaxLoad: req[0].acMaxLoad,
-            clMaxLoad: req[0].clMaxLoad
-        }
-    );
     
-    var optimization = optimizer.getOptimization();
+    var optimizer: Optimizer;
+    var optimization: IOptimizationFeed;
+    var storeOptimizationRes: any;
+    var supply: any;
+    var loadStatic: any;
 
-    storeOptimizationRes = await storeOptimization.storeOptimization(req[0].tenant, req[0].startDate, optimization);
-    if (storeOptimizationRes.error) {
-        controllerRes = {
-            status: storeOptimizationRes.status,
-            error: storeOptimizationRes.error
+    return new Promise ( async (resolve) => {
+
+        loadStatic = await constructOptimizationFeed.getStaticLoad(req[0].loadStaticId);
+        if (loadStatic.error) {
+            resolve({
+                status: 500,
+                error: loadStatic.error
+            })
         }
-    } else {
-        controllerRes = {
-            status: storeOptimizationRes.status,
-            data: [
-                optimization
-            ]
+
+        supply = await constructOptimizationFeed.getSupply(req[0].supplyId);
+        if (supply.error) {
+            resolve({
+                status: 500,
+                error: supply.error
+            })
         }
-    }
 
-    return new Promise ( (resolve) => {
 
-        resolve(controllerRes)
+        optimizer = new Optimizer(
+            {
+                supply: supply,
+                loadStatic: loadStatic,
+                acDemand: req[0].acDemand,
+                clDemand: req[0].clDemand,
+                acTimeRange: req[0].acTimeRange,
+                clTimeRange: req[0].clTimeRange,
+                acMaxLoad: req[0].acMaxLoad,
+                clMaxLoad: req[0].clMaxLoad
+            }
+        );
+        
+
+        optimization = optimizer.getOptimization();
+
+
+        storeOptimizationRes = await storeOptimization.storeOptimization(req[0].tenant, req[0].startDate, optimization);
+        if (storeOptimizationRes.error) {
+            resolve({
+                status: storeOptimizationRes.status,
+                error: storeOptimizationRes.error
+            })
+        } else {
+            resolve({
+                status: storeOptimizationRes.status,
+                data: [
+                    optimization
+                ]
+            })
+        }
+
     })
-
 }
 
 

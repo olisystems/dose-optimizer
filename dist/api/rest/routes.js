@@ -63,7 +63,12 @@ router.post('/', /*keycloak.protect(config.keycloak.role),*/ function (req, res)
                     res.status(optimizationRes.status).json(optimizationRes.data);
                 }
                 else {
-                    res.status(optimizationRes.status).json({ errors: [errors.internalServer] });
+                    if (optimizationRes.error) {
+                        res.status(optimizationRes.status).json({ errors: [optimizationRes.error] });
+                    }
+                    else {
+                        res.status(optimizationRes.status).json({ errors: [errors.internalServer] });
+                    }
                 }
                 return [2 /*return*/];
         }

@@ -40,6 +40,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var optimizer_1 = require("../../optimization/optimizer");
 var storeOptimization = require('../../db/optimization');
+var constructOptimizationFeed = require('../../optimization/construct-optimization-feed');
+/*
+supplyId: "OLI_11",
+loadStaticId: "OLI_12",
+*/
 // POST
 // -----------------------------------------------
 /**
@@ -47,42 +52,53 @@ var storeOptimization = require('../../db/optimization');
  */
 function optimize(req) {
     return __awaiter(this, void 0, void 0, function () {
-        var controllerRes, storeOptimizationRes, optimizer, optimization;
+        var optimizer, optimization, storeOptimizationRes, supply, loadStatic;
+        var _this = this;
         return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    optimizer = new optimizer_1.Optimizer({
-                        supply: req[0].supply,
-                        loadStatic: req[0].loadStatic,
-                        acDemand: req[0].acDemand,
-                        clDemand: req[0].clDemand,
-                        acTimeRange: req[0].acTimeRange,
-                        clTimeRange: req[0].clTimeRange,
-                        acMaxLoad: req[0].acMaxLoad,
-                        clMaxLoad: req[0].clMaxLoad
+            return [2 /*return*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4 /*yield*/, constructOptimizationFeed.getStaticLoad(req[0].loadStaticId)];
+                            case 1:
+                                loadStatic = _a.sent();
+                                if (loadStatic.error) {
+                                    resolve({
+                                        status: 500,
+                                        error: loadStatic.error
+                                    });
+                                }
+                                optimizer = new optimizer_1.Optimizer({
+                                    supply: req[0].supply,
+                                    loadStatic: loadStatic,
+                                    acDemand: req[0].acDemand,
+                                    clDemand: req[0].clDemand,
+                                    acTimeRange: req[0].acTimeRange,
+                                    clTimeRange: req[0].clTimeRange,
+                                    acMaxLoad: req[0].acMaxLoad,
+                                    clMaxLoad: req[0].clMaxLoad
+                                });
+                                optimization = optimizer.getOptimization();
+                                return [4 /*yield*/, storeOptimization.storeOptimization(req[0].tenant, req[0].startDate, optimization)];
+                            case 2:
+                                storeOptimizationRes = _a.sent();
+                                if (storeOptimizationRes.error) {
+                                    resolve({
+                                        status: storeOptimizationRes.status,
+                                        error: storeOptimizationRes.error
+                                    });
+                                }
+                                else {
+                                    resolve({
+                                        status: storeOptimizationRes.status,
+                                        data: [
+                                            optimization
+                                        ]
+                                    });
+                                }
+                                return [2 /*return*/];
+                        }
                     });
-                    optimization = optimizer.getOptimization();
-                    return [4 /*yield*/, storeOptimization.storeOptimization(optimization)];
-                case 1:
-                    storeOptimizationRes = _a.sent();
-                    if (storeOptimizationRes.error) {
-                        controllerRes = {
-                            status: storeOptimizationRes.status,
-                            error: storeOptimizationRes.error
-                        };
-                    }
-                    else {
-                        controllerRes = {
-                            status: storeOptimizationRes.status,
-                            data: [
-                                optimization
-                            ]
-                        };
-                    }
-                    return [2 /*return*/, new Promise(function (resolve) {
-                            resolve(controllerRes);
-                        })];
-            }
+                }); })];
         });
     });
 }

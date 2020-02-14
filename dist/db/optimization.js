@@ -37,12 +37,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var sqlite3 = require('sqlite-async');
-function storeOptimization(optimizationFeed) {
+function storeOptimization(tenant, startDate, optimizationFeed) {
     return __awaiter(this, void 0, void 0, function () {
         var res, db, queryString;
         var _this = this;
         return __generator(this, function (_a) {
-            queryString = 'INSERT INTO "optimizations" ("tenant", "start_date", "in_progress", "optimization") VALUES (?, ?, ?, ?)';
+            queryString = 'INSERT INTO "optimizations" ("tenant", "start_date", "in_progress", "data") VALUES (?, ?, ?, ?)';
             return [2 /*return*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
                     var error_1, error_2;
                     return __generator(this, function (_a) {
@@ -62,7 +62,7 @@ function storeOptimization(optimizationFeed) {
                                 return [3 /*break*/, 3];
                             case 3:
                                 _a.trys.push([3, 5, , 6]);
-                                return [4 /*yield*/, db.run(queryString, 'OLI_3', '27-02-2020', 1, JSON.stringify(optimizationFeed))];
+                                return [4 /*yield*/, db.run(queryString, tenant, startDate, 0, JSON.stringify(optimizationFeed))];
                             case 4:
                                 _a.sent();
                                 res = {
@@ -72,6 +72,7 @@ function storeOptimization(optimizationFeed) {
                                 return [3 /*break*/, 6];
                             case 5:
                                 error_2 = _a.sent();
+                                console.log(error_2);
                                 res = {
                                     status: 500,
                                     error: error_2

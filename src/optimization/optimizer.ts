@@ -7,12 +7,10 @@ export class Optimizer {
     // fields
     private _optimizatoinFeed: IOptimizationFeed;
     private _optimization: IOptimizationFeed; 
-
     private _acStartInterval: number;
     private _acEndInterval: number;
     private _clStartInterval: number;
     private _clEndInterval: number;
-
     private _acMaxLoad: number;
     private _clMaxLoad: number;
 
