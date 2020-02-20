@@ -16,7 +16,8 @@ export class IntervalsToTimestamps {
     }
 
     /**
-     * @param {Date} date - date for timestamp generation
+     *  Return 
+     *  @param {Date} date - date for timestamp generation
      */
     public createTimestamps(date: Date) {
         
@@ -32,4 +33,5 @@ export class IntervalsToTimestamps {
 
         // console.log(this._IntervalTimestamps)
     }
+
 }

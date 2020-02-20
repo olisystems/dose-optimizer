@@ -7,16 +7,13 @@ import { IOptimizationFeed } from '../../data-models/energy-profile';
 const storeOptimization = require('../../db/optimization');
 const constructOptimizationFeed = require('../../optimization/construct-optimization-feed');
 
-/*
-supplyId: "OLI_11",
-loadStaticId: "OLI_12",
-*/
+
 
 // POST
 // -----------------------------------------------
 
 /**
- * @param {any} req - request
+ * @param {any} req request
  */
 async function optimize(req: any ) {
     
@@ -36,7 +33,8 @@ async function optimize(req: any ) {
             })
         }
 
-        supply = await constructOptimizationFeed.getSupply(req[0].supplyId);
+        // TODO: zip has to token out of the database
+        supply = await constructOptimizationFeed.getSupply(req[0].supplyId, '83471', new Date(req[0].startDate) );
         if (supply.error) {
             resolve({
                 status: 500,
@@ -76,7 +74,6 @@ async function optimize(req: any ) {
                 ]
             })
         }
-
     })
 }
 
