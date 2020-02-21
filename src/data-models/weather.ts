@@ -4,5 +4,5 @@
 
 export interface IWeatherDataInterploated {
     temperature: number[];
-    weather: number[];
+    condition: number[];
 }

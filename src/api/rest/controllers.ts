@@ -4,7 +4,8 @@
 
 import { Optimizer } from '../../optimization/optimizer';
 import { IOptimizationFeed } from '../../data-models/energy-profile';
-const storeOptimization = require('../../db/optimization');
+
+const optimizationDb = require('../../db/optimization');
 const constructOptimizationFeed = require('../../optimization/construct-optimization-feed');
 
 
@@ -60,7 +61,7 @@ async function optimize(req: any ) {
         optimization = optimizer.getOptimization();
 
 
-        storeOptimizationRes = await storeOptimization.storeOptimization(req[0].tenant, req[0].startDate, optimization);
+        storeOptimizationRes = await optimizationDb.storeOptimization(req[0].tenant, req[0].startDate, optimization);
         if (storeOptimizationRes.error) {
             resolve({
                 status: storeOptimizationRes.status,

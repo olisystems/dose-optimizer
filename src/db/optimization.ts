@@ -1,6 +1,8 @@
 
 import { IOptimizationFeed } from '../data-models/energy-profile';
+const weatherDB = require('../db/weather');
 const sqlite3 = require('sqlite-async');
+
 
 
 async function storeOptimization( tenant: string, startDate: string, optimizationFeed: IOptimizationFeed ) {
@@ -12,10 +14,8 @@ async function storeOptimization( tenant: string, startDate: string, optimizatio
     return new Promise ( async  (resolve) => {
 
         try {
-
             db = await sqlite3.open("optimizations.db");
         } catch (error) {
-            
             res = {
                 status: 500,
                 error: error
@@ -23,17 +23,12 @@ async function storeOptimization( tenant: string, startDate: string, optimizatio
         }
 
         try {
-
             await db.run(queryString, tenant, startDate, 0, JSON.stringify(optimizationFeed))
-            
             res = {
                 status: 200,
                 message: 'successfully stored optimization'
             }
-
         } catch (error) {
-
-            console.log(error)
             res = {
                 status: 500,
                 error: error
@@ -42,7 +37,6 @@ async function storeOptimization( tenant: string, startDate: string, optimizatio
 
         await db.close();
         resolve(res)
-        
     })
 }
 

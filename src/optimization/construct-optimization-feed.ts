@@ -4,6 +4,7 @@ import { IWeatherDataInterploated } from '../data-models/weather'
 const sqlite3 = require('sqlite-async');
 const axios = require("axios");
 const Spline = require('cubic-spline');
+const weatherDb = require('../db/weather');
 
 
 
@@ -109,7 +110,8 @@ async function getWeatherData( zipCode: string ) {
 
 
 /**
- * 
+ * Get weather in 3H Blocks and construct a cubic spline line interpolation
+ * to construct 15 min weather blocks 
  * @param {string} zipCode postal code of tenant adress 
  * @param {Data} optimizationDate - date of optimization
  */
@@ -117,26 +119,43 @@ async function getWeatherDataInterpolated( zipCode: string, optimizationDate: Da
     
     var weatherDataInterpolated: IWeatherDataInterploated = {
         temperature: [],
-        weather: []
+        condition: []
     }
     var xSpline: number[] = [6, 18, 30, 42, 54, 66, 78, 90, 102];
     var ySpline: number[] = [];
     
     return new Promise ( async (resolve) => {
 
-        var weatherData: any = await getWeatherData ( zipCode );
         var optimizationTimestamp = optimizationDate.getTime() / 1000;
         var tmpCnt: number = 0;
+        var weatherData: any = await getWeatherData ( zipCode );
+        var conditionCode: number = 9;
 
         if (weatherData.error) {
             resolve(weatherData);
         }
 
-        weatherData.data.list.forEach( (element: any, index: any) => {
+
+        weatherData.data.list.forEach( async (element: any, index: any) => {
             if ( ( element.dt >= optimizationTimestamp ) && ( tmpCnt < 9 ) ) {
+                
                 tmpCnt += 1
                 ySpline.push(element.main.temp);
-                weatherDataInterpolated.weather.push();
+            
+                
+                conditionCode = await weatherDb.getWeatherConditionCode();
+                console.log('##########################################');
+                console.log(conditionCode);
+                
+                
+                if ( tmpCnt < 9 ) {
+                    for ( let i: number = 1; i <= 12; i++ ) {
+                        
+                        //console.log(element.weather[0].description);
+                        weatherDataInterpolated.condition.push(conditionCode)
+                    }
+                }
+            
             }
         });
 
@@ -147,11 +166,12 @@ async function getWeatherDataInterpolated( zipCode: string, optimizationDate: Da
         }
 
 
-        console.log(ySpline)
-        console.log(weatherDataInterpolated.temperature);
-        console.log('lenght: ' + weatherDataInterpolated.temperature.length );
+        //console.log(weatherDataInterpolated.temperature);
+        //console.log(weatherDataInterpolated.condition);
+        //console.log('lenght: ' + weatherDataInterpolated.temperature.length );
+        //console.log('lenght: ' + weatherDataInterpolated.condition.length );
 
-        resolve({response: 'i am a response'})
+        resolve(weatherDataInterpolated)
     })
 }
 
