@@ -144,9 +144,9 @@ async function getWeatherDataInterpolated( zipCode: string, optimizationDate: Da
             
                 
                 conditionCode = await weatherDb.getWeatherConditionCode();
-                console.log('##########################################');
-                console.log(conditionCode);
-                
+                // *******************************************************
+                //console.log('##########################################');
+                //console.log(conditionCode);
                 
                 if ( tmpCnt < 9 ) {
                     for ( let i: number = 1; i <= 12; i++ ) {

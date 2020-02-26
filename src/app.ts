@@ -31,10 +31,19 @@ if (process.env.NODE_ENV !== 'production') {
 
 // keycloak
 var memoryStore = new session.MemoryStore();                       
-var keycloak = new Keycloak({ store: memoryStore });
+let kcConfig = {
+    clientId: 'tutorial-backend',
+    bearerOnly: true,
+    serverUrl: 'http://localhost:3015/auth/',
+    realm: 'oli',
+    sslRequired: "external"
+}
+var keycloak = new Keycloak({ store: memoryStore }, kcConfig);
+
+
 
 app.use(session({
-    secret: config.keycloak.secret,                         
+    secret: 'cf08c63a-ca0f-4598-a78d-faf021ce9a12', //config.keycloak.secret,                         
     resave: false,                         
     saveUninitialized: true,                         
     store: memoryStore                       
@@ -77,6 +86,14 @@ app.use('/test', express.static('./test/optimization-plots'));
 
 // request routes
 app.use('/v1', routes);
+
+// api tests routes
+app.get('/test/public', (req, res, next) => {
+    res.status(200).json({"status": "200", "type": "public"})
+});
+app.get('/test/protected', keycloak.protect(), (req, res, next) => {
+    res.status(200).json({"status": "200", "type": "protected"})
+});
 
 
 // errors

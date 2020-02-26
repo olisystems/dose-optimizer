@@ -24,7 +24,8 @@ async function getWeatherConditionCode() {
 
         try {
             weatherConditions = await db.all(queryString);
-            console.log(weatherConditions)
+            // *****************************
+            //console.log(weatherConditions)
             res = weatherConditions;
         } catch (error) {
             res = { error: error }
