@@ -11,7 +11,8 @@ var IntervalsToTimestamps = /** @class */ (function () {
         this._IntervalTimestamps = [];
     }
     /**
-     * @param {Date} date - date for timestamp generation
+     *  Return
+     *  @param {Date} date - date for timestamp generation
      */
     IntervalsToTimestamps.prototype.createTimestamps = function (date) {
         var startTime = date.getTime() - (config_1.config.gmtTimeZone * 60 * 60 * 1000);

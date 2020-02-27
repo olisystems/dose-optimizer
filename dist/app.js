@@ -8,7 +8,6 @@ var bodyParser = require("body-parser");
 var compression = require("compression");
 var session = require("express-session");
 var Keycloak = require("keycloak-connect");
-var config_1 = require("./config");
 var routes = require('./api/rest/routes');
 // app setups
 // -----------------------------------------------
@@ -22,9 +21,16 @@ if (process.env.NODE_ENV !== 'production') {
 }
 // keycloak
 var memoryStore = new session.MemoryStore();
-var keycloak = new Keycloak({ store: memoryStore });
+var kcConfig = {
+    clientId: 'tutorial-backend',
+    bearerOnly: true,
+    serverUrl: 'http://localhost:3015/auth/',
+    realm: 'oli',
+    sslRequired: "external"
+};
+var keycloak = new Keycloak({ store: memoryStore }, kcConfig);
 app.use(session({
-    secret: config_1.config.keycloak.secret,
+    secret: 'cf08c63a-ca0f-4598-a78d-faf021ce9a12',
     resave: false,
     saveUninitialized: true,
     store: memoryStore
@@ -52,6 +58,13 @@ app.use(function (req, res, next) {
 app.use('/test', express.static('./test/optimization-plots'));
 // request routes
 app.use('/v1', routes);
+// api tests routes
+app.get('/test/public', function (req, res, next) {
+    res.status(200).json({ "status": "200", "type": "public" });
+});
+app.get('/test/protected', keycloak.protect(), function (req, res, next) {
+    res.status(200).json({ "status": "200", "type": "protected" });
+});
 // errors
 app.use(function (req, res, next) {
     var error = new Error("Not found");

@@ -37,29 +37,82 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var sqlite3 = require('sqlite-async');
-function getSupply(oliId) {
+var axios = require("axios");
+var Spline = require('cubic-spline');
+var weatherDB = require('../db/weather');
+/**
+ * Get the pv supply array of an oli id
+ * @param {string} oliId - oli box id pv plant
+ * @param {string} zipCode - zip code for weather forcast
+ * @param {Data} optimizationDate - date of optimization
+ */
+function getSupply(oliId, zipCode, optimizationDate) {
     return __awaiter(this, void 0, void 0, function () {
-        var res, db, queryString;
+        var res, db, queryString, supply, weatherData;
         var _this = this;
         return __generator(this, function (_a) {
-            queryString = 'SELECT * FROM "supply" WHERE pk = ?';
+            queryString = 'SELECT data FROM "supply" WHERE oli_id = ?';
             return [2 /*return*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
+                    var error_1, i, error_2;
                     return __generator(this, function (_a) {
-                        resolve(res);
-                        return [2 /*return*/];
+                        switch (_a.label) {
+                            case 0: return [4 /*yield*/, getWeatherDataFactors(zipCode, optimizationDate)];
+                            case 1:
+                                weatherData = _a.sent();
+                                if (weatherData.error) {
+                                    resolve(weatherData);
+                                }
+                                _a.label = 2;
+                            case 2:
+                                _a.trys.push([2, 4, , 5]);
+                                return [4 /*yield*/, sqlite3.open("optimizations.db")];
+                            case 3:
+                                db = _a.sent();
+                                return [3 /*break*/, 5];
+                            case 4:
+                                error_1 = _a.sent();
+                                res = { error: error_1 };
+                                return [3 /*break*/, 5];
+                            case 5:
+                                _a.trys.push([5, 7, , 8]);
+                                return [4 /*yield*/, db.all(queryString, oliId)];
+                            case 6:
+                                supply = _a.sent();
+                                supply = JSON.parse(supply[0].data);
+                                console.log(supply.value);
+                                for (i = 0; i < supply.value.length; i++) {
+                                    supply.value[i] *= weatherData.condition[i];
+                                }
+                                console.log(supply.value);
+                                res = supply;
+                                return [3 /*break*/, 8];
+                            case 7:
+                                error_2 = _a.sent();
+                                res = { error: error_2 };
+                                return [3 /*break*/, 8];
+                            case 8: return [4 /*yield*/, db.close()];
+                            case 9:
+                                _a.sent();
+                                resolve(res);
+                                return [2 /*return*/];
+                        }
                     });
                 }); })];
         });
     });
 }
+/**
+ * Get the pv static load array of a tenant identified by an oli id
+ * @param {string} oliId
+ */
 function getStaticLoad(oliId) {
     return __awaiter(this, void 0, void 0, function () {
-        var res, db, queryString, supply;
+        var res, db, queryString, loadStatic;
         var _this = this;
         return __generator(this, function (_a) {
             queryString = 'SELECT data FROM "load_static" WHERE oli_id = ?';
             return [2 /*return*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
-                    var error_1, error_2;
+                    var error_3, error_4;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0:
@@ -69,19 +122,19 @@ function getStaticLoad(oliId) {
                                 db = _a.sent();
                                 return [3 /*break*/, 3];
                             case 2:
-                                error_1 = _a.sent();
-                                res = { error: error_1 };
+                                error_3 = _a.sent();
+                                res = { error: error_3 };
                                 return [3 /*break*/, 3];
                             case 3:
                                 _a.trys.push([3, 5, , 6]);
                                 return [4 /*yield*/, db.all(queryString, oliId)];
                             case 4:
-                                supply = _a.sent();
-                                res = JSON.parse(supply[0].data);
+                                loadStatic = _a.sent();
+                                res = JSON.parse(loadStatic[0].data);
                                 return [3 /*break*/, 6];
                             case 5:
-                                error_2 = _a.sent();
-                                res = { error: error_2 };
+                                error_4 = _a.sent();
+                                res = { error: error_4 };
                                 return [3 /*break*/, 6];
                             case 6: return [4 /*yield*/, db.close()];
                             case 7:
@@ -94,11 +147,111 @@ function getStaticLoad(oliId) {
         });
     });
 }
-function getWeatherData() {
+/**
+ * Get the weather forcast data for the next 5 days in an intervall of 3H
+ * The data are requested from open weather map in the following structure:
+ *  - 3H blocks. 8 times 3H Blocks = 24H day. 1. block 00:00 - 03:00, 2.block 03:00 - 06:00
+ *  - The first block time (dt) of the request is the next 3H interval.
+ *    For example: if the weather forcast is requested at 10:06,
+ *    then the the timestamp of the first block is 12:00.
+ * @param {string} zipCode - zip code for weather forcast
+ */
+function getWeatherData(zipCode) {
     return __awaiter(this, void 0, void 0, function () {
+        var owmGetWeatherUrl, weatherData;
+        var _this = this;
         return __generator(this, function (_a) {
-            return [2 /*return*/, new Promise(function (resolve) {
-                })];
+            owmGetWeatherUrl = process.env.OWM_API_URL + "zip=" + zipCode + ",de&appid=" + process.env.OWM_API_KEY + "&units=metric";
+            return [2 /*return*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
+                    var error_5;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0:
+                                _a.trys.push([0, 2, , 3]);
+                                return [4 /*yield*/, axios.get(owmGetWeatherUrl)];
+                            case 1:
+                                weatherData = _a.sent();
+                                resolve(weatherData);
+                                return [3 /*break*/, 3];
+                            case 2:
+                                error_5 = _a.sent();
+                                resolve({ error: error_5.response.data });
+                                return [3 /*break*/, 3];
+                            case 3: return [2 /*return*/];
+                        }
+                    });
+                }); })];
+        });
+    });
+}
+/**
+ * Get weather in 3H Blocks and construct a cubic spline line interpolation
+ * to construct 15 min weather blocks
+ * @param {string} zipCode postal code of tenant adress
+ * @param {Data} optimizationDate - date of optimization
+ */
+function getWeatherDataFactors(zipCode, optimizationDate) {
+    return __awaiter(this, void 0, void 0, function () {
+        var weatherDataFactors, xSpline, ySpline;
+        var _this = this;
+        return __generator(this, function (_a) {
+            weatherDataFactors = {
+                temperature: [],
+                condition: []
+            };
+            xSpline = [6, 18, 30, 42, 54, 66, 78, 90, 102];
+            ySpline = [];
+            return [2 /*return*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
+                    var optimizationTimestamp, tmpCnt, weatherData, conditionCode, weatherDataArr, i, i_1, spline, i;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0:
+                                optimizationTimestamp = optimizationDate.getTime() / 1000;
+                                tmpCnt = 0;
+                                return [4 /*yield*/, getWeatherData(zipCode)];
+                            case 1:
+                                weatherData = _a.sent();
+                                if (weatherData.error) {
+                                    resolve(weatherData);
+                                }
+                                weatherDataArr = weatherData.data.list;
+                                i = 0;
+                                _a.label = 2;
+                            case 2:
+                                if (!(i < weatherDataArr.length)) return [3 /*break*/, 5];
+                                if (!((weatherDataArr[i].dt >= optimizationTimestamp) && (tmpCnt < 9))) return [3 /*break*/, 4];
+                                ySpline.push(weatherDataArr[i].main.temp);
+                                return [4 /*yield*/, weatherDB.getWeatherConditionCode(weatherDataArr[i].weather[0].main)];
+                            case 3:
+                                conditionCode = _a.sent();
+                                if (conditionCode.error) {
+                                    resolve(conditionCode);
+                                }
+                                tmpCnt += 1;
+                                if (tmpCnt < 9) {
+                                    for (i_1 = 1; i_1 <= 12; i_1++) {
+                                        weatherDataFactors.condition.push(conditionCode);
+                                    }
+                                }
+                                _a.label = 4;
+                            case 4:
+                                i++;
+                                return [3 /*break*/, 2];
+                            case 5:
+                                ;
+                                spline = new Spline(xSpline, ySpline);
+                                for (i = 1; i <= 96; i++) {
+                                    weatherDataFactors.temperature.push(Math.round(spline.at(i) * 100) / 100);
+                                }
+                                //console.log(weatherDataFactors.temperature);
+                                //console.log(weatherDataFactors.condition);
+                                //console.log('lenght: ' + weatherDataFactors.temperature.length );
+                                //console.log('lenght: ' + weatherDataFactors.condition.length );
+                                resolve(weatherDataFactors);
+                                return [2 /*return*/];
+                        }
+                    });
+                }); })];
         });
     });
 }

@@ -39,16 +39,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var optimizer_1 = require("../../optimization/optimizer");
-var storeOptimization = require('../../db/optimization');
+var optimizationDb = require('../../db/optimization');
 var constructOptimizationFeed = require('../../optimization/construct-optimization-feed');
-/*
-supplyId: "OLI_11",
-loadStaticId: "OLI_12",
-*/
 // POST
 // -----------------------------------------------
 /**
- * @param {any} req - request
+ * @param {any} req request
  */
 function optimize(req) {
     return __awaiter(this, void 0, void 0, function () {
@@ -67,8 +63,18 @@ function optimize(req) {
                                         error: loadStatic.error
                                     });
                                 }
+                                return [4 /*yield*/, constructOptimizationFeed.getSupply(req[0].supplyId, '83471', new Date(req[0].startDate))];
+                            case 2:
+                                // TODO: zip has to token out of the database
+                                supply = _a.sent();
+                                if (supply.error) {
+                                    resolve({
+                                        status: 500,
+                                        error: supply.error
+                                    });
+                                }
                                 optimizer = new optimizer_1.Optimizer({
-                                    supply: req[0].supply,
+                                    supply: supply,
                                     loadStatic: loadStatic,
                                     acDemand: req[0].acDemand,
                                     clDemand: req[0].clDemand,
@@ -78,8 +84,8 @@ function optimize(req) {
                                     clMaxLoad: req[0].clMaxLoad
                                 });
                                 optimization = optimizer.getOptimization();
-                                return [4 /*yield*/, storeOptimization.storeOptimization(req[0].tenant, req[0].startDate, optimization)];
-                            case 2:
+                                return [4 /*yield*/, optimizationDb.storeOptimization(req[0].tenant, req[0].startDate, optimization)];
+                            case 3:
                                 storeOptimizationRes = _a.sent();
                                 if (storeOptimizationRes.error) {
                                     resolve({

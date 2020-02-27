@@ -1,12 +1,11 @@
 
-import { IOptimizationFeed } from '../data-models/energy-profile';
 const sqlite3 = require('sqlite-async');
 
 
 
-async function getWeatherConditionCode() {
+async function getWeatherConditionCode(conditionDescriptoin: string) {
     
-    var res: object;
+    var res: any;
     var db: any; 
     var queryString = 'SELECT * FROM lu_weather_condition WHERE description = ?';
     var weatherConditions: any;
@@ -16,17 +15,18 @@ async function getWeatherConditionCode() {
         try {
             db = await sqlite3.open("optimizations.db");
         } catch (error) {
-            res = {
-                status: 500,
-                error: error
-            }
+            res = { error: error }
         }
 
         try {
-            weatherConditions = await db.all(queryString);
-            // *****************************
-            //console.log(weatherConditions)
-            res = weatherConditions;
+
+            weatherConditions = await db.all(queryString, conditionDescriptoin);
+            if (weatherConditions[0] === undefined) {
+                res = 0.6 // default condition factor
+            } else {
+                res = weatherConditions[0].factor
+            }
+
         } catch (error) {
             res = { error: error }
         }

@@ -44,6 +44,7 @@ CREATE TABLE "supply" (
 
 DROP TABLE IF EXISTS "lu_weather_condition";
 CREATE TABLE "lu_weather_condition" (
+	"factor"	INTEGER NOT NULL,
 	"code"	INTEGER NOT NULL,
 	"description"	TEXT NOT NULL,
 	PRIMARY KEY("description")
@@ -92,17 +93,13 @@ VALUES ('OLI_1', 'OLI_32', '{"oliBox":"OLI_11","type":"activeEnery","interval":[
 -- --------------------------------------------------
 
 delete from lu_weather_condition;
-insert into lu_weather_condition (code, description) values (1, 'clear sky');
-insert into lu_weather_condition (code, description) values (2, 'few clouds');
-insert into lu_weather_condition (code, description) values (2, 'scattered clouds');
-insert into lu_weather_condition (code, description) values (2, 'broken clouds');
-insert into lu_weather_condition (code, description) values (2, 'shower rain');
-insert into lu_weather_condition (code, description) values (3, 'rain');
-insert into lu_weather_condition (code, description) values (3, 'thunderstorm');
-insert into lu_weather_condition (code, description) values (3, 'snow');
-insert into lu_weather_condition (code, description) values (3, 'mist');
+insert into lu_weather_condition (factor, code, description) values (1, 1, 'Clear');
+insert into lu_weather_condition (factor, code, description) values (0.6, 2, 'Clouds');
+insert into lu_weather_condition (factor, code, description) values (0.6, 2, 'Drizzle');
+insert into lu_weather_condition (factor, code, description) values (0.1, 3, 'Rain');
+insert into lu_weather_condition (factor, code, description) values (0.1, 3, 'Thunderstorm');
+insert into lu_weather_condition (factor, code, description) values (0.1, 3, 'Snow');
 
 
 
 ------------------------------------------------------------------------------- */
-

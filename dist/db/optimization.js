@@ -72,7 +72,6 @@ function storeOptimization(tenant, startDate, optimizationFeed) {
                                 return [3 /*break*/, 6];
                             case 5:
                                 error_2 = _a.sent();
-                                console.log(error_2);
                                 res = {
                                     status: 500,
                                     error: error_2

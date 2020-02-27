@@ -4,7 +4,7 @@ import { IWeatherDataInterploated } from '../data-models/weather'
 const sqlite3 = require('sqlite-async');
 const axios = require("axios");
 const Spline = require('cubic-spline');
-const weatherDb = require('../db/weather');
+const weatherDB = require('../db/weather');
 
 
 
@@ -24,10 +24,10 @@ async function getSupply( oliId: string, zipCode: string, optimizationDate: Date
 
     return new Promise ( async  (resolve) => {
         
-        weatherData = await getWeatherDataInterpolated ( zipCode, optimizationDate )
+        weatherData = await getWeatherDataFactors ( zipCode, optimizationDate )
         if (weatherData.error) {
             resolve(weatherData)    
-        }   
+        } 
 
         try {
             db = await sqlite3.open("optimizations.db");
@@ -36,8 +36,18 @@ async function getSupply( oliId: string, zipCode: string, optimizationDate: Date
         }
 
         try {
+            
             supply = await db.all(queryString, oliId);
-            res = JSON.parse(supply[0].data);
+            supply = JSON.parse(supply[0].data)
+            
+            console.log(supply.value)
+            for (let i = 0; i < supply.value.length; i++ ) {
+                supply.value[i] *= weatherData.condition[i];
+            }
+            console.log(supply.value)
+
+            res = supply;
+
         } catch (error) {
             res = { error: error };
         }
@@ -115,9 +125,9 @@ async function getWeatherData( zipCode: string ) {
  * @param {string} zipCode postal code of tenant adress 
  * @param {Data} optimizationDate - date of optimization
  */
-async function getWeatherDataInterpolated( zipCode: string, optimizationDate: Date ) {
+async function getWeatherDataFactors( zipCode: string, optimizationDate: Date ) {
     
-    var weatherDataInterpolated: IWeatherDataInterploated = {
+    var weatherDataFactors: IWeatherDataInterploated = {
         temperature: [],
         condition: []
     }
@@ -129,49 +139,46 @@ async function getWeatherDataInterpolated( zipCode: string, optimizationDate: Da
         var optimizationTimestamp = optimizationDate.getTime() / 1000;
         var tmpCnt: number = 0;
         var weatherData: any = await getWeatherData ( zipCode );
-        var conditionCode: number = 9;
+        var conditionCode: any;
+        var weatherDataArr: any;
 
         if (weatherData.error) {
             resolve(weatherData);
         }
-
-
-        weatherData.data.list.forEach( async (element: any, index: any) => {
-            if ( ( element.dt >= optimizationTimestamp ) && ( tmpCnt < 9 ) ) {
+        
+        weatherDataArr = weatherData.data.list;
+        for (let i = 0; i < weatherDataArr.length; i++ ) {
+             
+            if ( ( weatherDataArr[i].dt >= optimizationTimestamp ) && ( tmpCnt < 9 ) ) {
+                
+                ySpline.push(weatherDataArr[i].main.temp);
+                
+                conditionCode = await weatherDB.getWeatherConditionCode(weatherDataArr[i].weather[0].main);
+                if (conditionCode.error) {
+                    resolve(conditionCode);
+                }
                 
                 tmpCnt += 1
-                ySpline.push(element.main.temp);
-            
-                
-                conditionCode = await weatherDb.getWeatherConditionCode();
-                // *******************************************************
-                //console.log('##########################################');
-                //console.log(conditionCode);
-                
                 if ( tmpCnt < 9 ) {
                     for ( let i: number = 1; i <= 12; i++ ) {
-                        
-                        //console.log(element.weather[0].description);
-                        weatherDataInterpolated.condition.push(conditionCode)
+                        weatherDataFactors.condition.push(conditionCode)
                     }
                 }
-            
             }
-        });
+        };
 
         const spline = new Spline(xSpline, ySpline);
 
         for ( let i: number = 1; i <= 96; i++ ) {
-            weatherDataInterpolated.temperature.push( Math.round( spline.at(i) * 100  ) / 100  );
+            weatherDataFactors.temperature.push( Math.round( spline.at(i) * 100  ) / 100  );
         }
 
+        //console.log(weatherDataFactors.temperature);
+        //console.log(weatherDataFactors.condition);
+        //console.log('lenght: ' + weatherDataFactors.temperature.length );
+        //console.log('lenght: ' + weatherDataFactors.condition.length );
 
-        //console.log(weatherDataInterpolated.temperature);
-        //console.log(weatherDataInterpolated.condition);
-        //console.log('lenght: ' + weatherDataInterpolated.temperature.length );
-        //console.log('lenght: ' + weatherDataInterpolated.condition.length );
-
-        resolve(weatherDataInterpolated)
+        resolve(weatherDataFactors)
     })
 }
 

@@ -1,6 +1,5 @@
 
 import { IOptimizationFeed } from '../data-models/energy-profile';
-const weatherDB = require('../db/weather');
 const sqlite3 = require('sqlite-async');
 
 

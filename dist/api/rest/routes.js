@@ -52,7 +52,7 @@ var keycloak = new Keycloak({ store: memoryStore });
  * Optimization Route
  * protected
  */
-router.post('/', /*keycloak.protect(config.keycloak.role),*/ function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+router.post('/', /*keycloak.protect(),*/ function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var optimizationRes;
     return __generator(this, function (_a) {
         switch (_a.label) {

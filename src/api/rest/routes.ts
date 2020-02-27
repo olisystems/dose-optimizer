@@ -24,7 +24,7 @@ var keycloak = new Keycloak({ store: memoryStore });
  * Optimization Route
  * protected 
  */
-router.post('/', keycloak.protect(), async (req, res) => {
+router.post('/', /*keycloak.protect(),*/ async (req, res) => {
 
     // TOTO: here goes a call to a request validation
     // validate: 
