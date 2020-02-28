@@ -8,7 +8,6 @@ require('dotenv').config();
 http.globalAgent.maxSockets = Infinity;
 // server
 // -----------------------------------------------
-// port
 var port = process.env.SERVER_PORT || 3011;
 if (process.env.NODE_ENV === 'production') {
     port = process.env.SERVER_PORT || 3010;

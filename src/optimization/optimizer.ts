@@ -50,10 +50,10 @@ export class Optimizer {
 
     private optimizationIsNecessary (supply: number[], loadStatic: number[], demand: number[]): boolean {
 
-        var optimizationIsNecessary: boolean = false; 
+        let optimizationIsNecessary: boolean = false; 
 
         // sum up static load and demand
-        var loadSum = loadStatic.map(function (loadSum, index) {
+        let loadSum = loadStatic.map(function (loadSum, index) {
             return loadSum + demand[index];
         });
 
@@ -71,10 +71,10 @@ export class Optimizer {
 
     private sumOfExceedingDemand (supply: number[], loadStatic: number[], demand: number[]): number {
 
-        var sumOfExceedingDemand: number = 0; 
+        let sumOfExceedingDemand: number = 0; 
 
         // sum up static load and demand
-        var loadSum = loadStatic.map(function (loadSum, index) {
+        let loadSum = loadStatic.map(function (loadSum, index) {
             return loadSum + demand[index];
         });
 
@@ -98,12 +98,12 @@ export class Optimizer {
     }
 
 
-    private deleteExceedingDemand (supply: number[], loadStatic: number[], demand: number[], deletedExceedingDemands: number[]): number[] {
+    private deleteExceedingDemand (supply: number[], loadStatic: number[], demand: number[], deletedExceedingDemandsP: number[]): number[] {
 
-        var deletedExceedingDemands: number[] = deletedExceedingDemands;
-        var deleteAmount: number;
+        let deletedExceedingDemands: number[] = deletedExceedingDemandsP;
+        let deleteAmount: number;
         // sum up static load and demand
-        var loadSum = loadStatic.map(function (loadSum, index) {
+        let loadSum = loadStatic.map(function (loadSum, index) {
             return loadSum + demand[index];
         });
 
@@ -143,7 +143,7 @@ export class Optimizer {
         optimizedDemandValues.forEach(function(value, index) {
             
             // set demand to distribute by cutting demand with the supply 
-            var demandToDistribute: number = (value + loadValues[index] - supplyValues[index]);
+            let demandToDistribute: number = (value + loadValues[index] - supplyValues[index]);
             // if demand is more than the maximum ac load, then reduce the demand to maximum ac load
             if ( (supplyValues[index] - loadValues[index]) >= acMaxLoad ) {
 
@@ -153,13 +153,13 @@ export class Optimizer {
             if (value > 0) {
                 
                 // loop from ac-start to ac-end
-                for (var i: number = index - 1; i >= acStartInterval -1; i--) {
+                for (let i: number = index - 1; i >= acStartInterval -1; i--) {
                     
                     // calculate free supply 
                     // if free supply is more than (acMaxLoad - optimizedDemandValues[i]) 
                     // then free supply = (acMaxLoad - optimizedDemandValues[i]). 
-                    //var freeSupply: number = Math.floor( Math.min((supplyValues[i] - loadValues[i] - optimizedDemandValues[i]), (acMaxLoad - optimizedDemandValues[i])) / 100) * 100;
-                    var freeSupply: number = Math.min((supplyValues[i] - loadValues[i] - optimizedDemandValues[i]), (acMaxLoad - optimizedDemandValues[i]));
+                    //let freeSupply: number = Math.floor( Math.min((supplyValues[i] - loadValues[i] - optimizedDemandValues[i]), (acMaxLoad - optimizedDemandValues[i])) / 100) * 100;
+                    let freeSupply: number = Math.min((supplyValues[i] - loadValues[i] - optimizedDemandValues[i]), (acMaxLoad - optimizedDemandValues[i]));
 
                     // if free capacity and the acMaxLoad is not yet fully used then distribute
                     if (freeSupply > 0) {
@@ -211,18 +211,18 @@ export class Optimizer {
         optimizedDemandValues.forEach(function(value, index) {
             
             // distribute ac demand in the 
-            var demandToDistribute: number = value;
+            let demandToDistribute: number = value;
             
             if (value > 0) {
                 
                 // loop from ac-start to ac-end
-                for (var i: number = clStartInterval - 1; i < clEndInterval; i++) {
+                for (let i: number = clStartInterval - 1; i < clEndInterval; i++) {
                     
                     // calculate free supply
                     // if free supply is more than (acMaxLoad - optimizedDemandValues[i]) 
                     // then free supply = (acMaxLoad - optimizedDemandValues[i]). 
-                    //var freeSupply: number = Math.floor( Math.min((supplyValues[i] - loadValues[i] - optimizedDemandValues[i]), (clMaxLoad - optimizedDemandValues[i])) / 100) * 100;
-                    var freeSupply: number = Math.min((supplyValues[i] - loadValues[i] - optimizedDemandValues[i]), (clMaxLoad - optimizedDemandValues[i]));
+                    //let freeSupply: number = Math.floor( Math.min((supplyValues[i] - loadValues[i] - optimizedDemandValues[i]), (clMaxLoad - optimizedDemandValues[i])) / 100) * 100;
+                    let freeSupply: number = Math.min((supplyValues[i] - loadValues[i] - optimizedDemandValues[i]), (clMaxLoad - optimizedDemandValues[i]));
 
                     // if free capacity and the acMaxLoad is not yet fully used then distribute
                     if (freeSupply > 0) {
@@ -256,10 +256,10 @@ export class Optimizer {
             optimizedDemandValues = this.deleteExceedingDemand(supplyValues, loadValues, optimizedDemandValues, optimizedDemandValues);
             
             // distribute the rest
-            var i: number = this._clStartInterval
+            let i: number = this._clStartInterval
             while (sumOfExceedingDemand > 0) {
 
-                for (var i: number = clStartInterval - 1; i < clEndInterval; i++) {
+                for (let i: number = clStartInterval - 1; i < clEndInterval; i++) {
 
                     if (sumOfExceedingDemand >= 100) {
                         
@@ -284,10 +284,11 @@ export class Optimizer {
     }
 
     
+    // TODO: remove the following function and from everywhere, where its imported
     public publishOptimization () {
 
-        var publisher: MqttPublisher = new MqttPublisher();
-        for (var i: number = 1; i < 2; i++) {
+        let publisher: MqttPublisher = new MqttPublisher();
+        for (let i: number = 1; i < 2; i++) {
             publisher.publish('DOSE/OLI_34/ChargingStation/setOutputLimit', '{"key1": "val1", "key2": "val2", "key3": "val3"}');
         }
         

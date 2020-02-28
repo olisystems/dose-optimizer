@@ -48,7 +48,7 @@ var constructOptimizationFeed = require('../../optimization/construct-optimizati
  */
 function optimize(req) {
     return __awaiter(this, void 0, void 0, function () {
-        var optimizer, optimization, storeOptimizationRes, supply, loadStatic;
+        var optimizer, optimization, storeOptimizationRes, supply, loadStatic, zipCode;
         var _this = this;
         return __generator(this, function (_a) {
             return [2 /*return*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {

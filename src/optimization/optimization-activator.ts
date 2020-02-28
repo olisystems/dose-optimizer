@@ -1,12 +1,12 @@
 
 import { resolve } from "bluebird";
 
-var publishNo: number = 0;
+let publishNo: number = 0;
 
 
 function publish () {
 
-    var tmpCnt: number = 0;
+    let tmpCnt: number = 0;
     
     publishNo += 1;
     console.log(publishNo);

@@ -64,8 +64,8 @@ var Optimizer = /** @class */ (function () {
         });
         return sumOfExceedingDemand;
     };
-    Optimizer.prototype.deleteExceedingDemand = function (supply, loadStatic, demand, deletedExceedingDemands) {
-        var deletedExceedingDemands = deletedExceedingDemands;
+    Optimizer.prototype.deleteExceedingDemand = function (supply, loadStatic, demand, deletedExceedingDemandsP) {
+        var deletedExceedingDemands = deletedExceedingDemandsP;
         var deleteAmount;
         // sum up static load and demand
         var loadSum = loadStatic.map(function (loadSum, index) {
@@ -106,7 +106,7 @@ var Optimizer = /** @class */ (function () {
                     // calculate free supply 
                     // if free supply is more than (acMaxLoad - optimizedDemandValues[i]) 
                     // then free supply = (acMaxLoad - optimizedDemandValues[i]). 
-                    //var freeSupply: number = Math.floor( Math.min((supplyValues[i] - loadValues[i] - optimizedDemandValues[i]), (acMaxLoad - optimizedDemandValues[i])) / 100) * 100;
+                    //let freeSupply: number = Math.floor( Math.min((supplyValues[i] - loadValues[i] - optimizedDemandValues[i]), (acMaxLoad - optimizedDemandValues[i])) / 100) * 100;
                     var freeSupply = Math.min((supplyValues[i] - loadValues[i] - optimizedDemandValues[i]), (acMaxLoad - optimizedDemandValues[i]));
                     // if free capacity and the acMaxLoad is not yet fully used then distribute
                     if (freeSupply > 0) {
@@ -153,7 +153,7 @@ var Optimizer = /** @class */ (function () {
                     // calculate free supply
                     // if free supply is more than (acMaxLoad - optimizedDemandValues[i]) 
                     // then free supply = (acMaxLoad - optimizedDemandValues[i]). 
-                    //var freeSupply: number = Math.floor( Math.min((supplyValues[i] - loadValues[i] - optimizedDemandValues[i]), (clMaxLoad - optimizedDemandValues[i])) / 100) * 100;
+                    //let freeSupply: number = Math.floor( Math.min((supplyValues[i] - loadValues[i] - optimizedDemandValues[i]), (clMaxLoad - optimizedDemandValues[i])) / 100) * 100;
                     var freeSupply = Math.min((supplyValues[i] - loadValues[i] - optimizedDemandValues[i]), (clMaxLoad - optimizedDemandValues[i]));
                     // if free capacity and the acMaxLoad is not yet fully used then distribute
                     if (freeSupply > 0) {
@@ -182,13 +182,13 @@ var Optimizer = /** @class */ (function () {
             // distribute the rest
             var i = this._clStartInterval;
             while (sumOfExceedingDemand > 0) {
-                for (var i = clStartInterval - 1; i < clEndInterval; i++) {
+                for (var i_1 = clStartInterval - 1; i_1 < clEndInterval; i_1++) {
                     if (sumOfExceedingDemand >= 100) {
-                        optimizedDemandValues[i] += 100;
+                        optimizedDemandValues[i_1] += 100;
                         sumOfExceedingDemand -= 100;
                     }
                     else {
-                        optimizedDemandValues[i] += sumOfExceedingDemand;
+                        optimizedDemandValues[i_1] += sumOfExceedingDemand;
                         sumOfExceedingDemand -= sumOfExceedingDemand;
                     }
                     if (sumOfExceedingDemand <= 0) {

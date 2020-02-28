@@ -1,21 +1,22 @@
 
-const sqlite3 = require('sqlite-async');
+var sqlite3 = require('sqlite-async');
 
 
 
 async function getWeatherConditionCode(conditionDescriptoin: string) {
     
-    var res: any;
-    var db: any; 
-    var queryString = 'SELECT * FROM lu_weather_condition WHERE description = ?';
-    var weatherConditions: any;
+    let res: any;
+    let db: any; 
+    let queryString = 'SELECT * FROM lu_weather_condition WHERE description = ?';
+    let weatherConditions: any;
     
     return new Promise ( async  (resolve) => {
 
         try {
             db = await sqlite3.open("optimizations.db");
         } catch (error) {
-            res = { error: error }
+            await db.close();
+            resolve({ error: error })
         }
 
         try {

@@ -47,19 +47,22 @@ function getWeatherConditionCode(conditionDescriptoin) {
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0:
-                                _a.trys.push([0, 2, , 3]);
+                                _a.trys.push([0, 2, , 4]);
                                 return [4 /*yield*/, sqlite3.open("optimizations.db")];
                             case 1:
                                 db = _a.sent();
-                                return [3 /*break*/, 3];
+                                return [3 /*break*/, 4];
                             case 2:
                                 error_1 = _a.sent();
-                                res = { error: error_1 };
-                                return [3 /*break*/, 3];
+                                return [4 /*yield*/, db.close()];
                             case 3:
-                                _a.trys.push([3, 5, , 6]);
-                                return [4 /*yield*/, db.all(queryString, conditionDescriptoin)];
+                                _a.sent();
+                                resolve({ error: error_1 });
+                                return [3 /*break*/, 4];
                             case 4:
+                                _a.trys.push([4, 6, , 7]);
+                                return [4 /*yield*/, db.all(queryString, conditionDescriptoin)];
+                            case 5:
                                 weatherConditions = _a.sent();
                                 if (weatherConditions[0] === undefined) {
                                     res = 0.6; // default condition factor
@@ -67,13 +70,13 @@ function getWeatherConditionCode(conditionDescriptoin) {
                                 else {
                                     res = weatherConditions[0].factor;
                                 }
-                                return [3 /*break*/, 6];
-                            case 5:
+                                return [3 /*break*/, 7];
+                            case 6:
                                 error_2 = _a.sent();
                                 res = { error: error_2 };
-                                return [3 /*break*/, 6];
-                            case 6: return [4 /*yield*/, db.close()];
-                            case 7:
+                                return [3 /*break*/, 7];
+                            case 7: return [4 /*yield*/, db.close()];
+                            case 8:
                                 _a.sent();
                                 resolve(res);
                                 return [2 /*return*/];

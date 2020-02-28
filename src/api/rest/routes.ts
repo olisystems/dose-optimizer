@@ -7,10 +7,10 @@ import session = require('express-session');
 import Keycloak = require('keycloak-connect');
 import { config } from '../../config';
 
-const controlers = require('./controllers');
-const errors: any = require('../../assets/responses/errors.json');
+var controlers = require('./controllers');
+var errors = require('../../assets/responses/errors.json');
 
-const router = express.Router();
+var router = express.Router();
 
 var memoryStore = new session.MemoryStore();
 var keycloak = new Keycloak({ store: memoryStore });
@@ -32,7 +32,7 @@ router.post('/', /*keycloak.protect(),*/ async (req, res) => {
     //  - is conntent of properties valid?
     //  - is optimization date in 5 day timerange?
     
-    var optimizationRes = await controlers.optimize(req.body);
+    let optimizationRes = await controlers.optimize(req.body);
 
     if (optimizationRes.status === 200 ) {
                 

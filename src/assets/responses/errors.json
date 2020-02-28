@@ -3,5 +3,10 @@
         "name": "error",
         "message": "internal server error",
         "errorCode": 500
+    },
+    "invalidRequestParameter": {
+        "name": "error",
+        "message": "invalid request parameter",
+        "errorCode": 400
     }
 }

@@ -1,7 +1,7 @@
 
 import { IntervalsToTimestamps } from '../../helper/intervals-to-timestamps';
 
-const mqtt = require('mqtt')
+var mqtt = require('mqtt')
 
 
 export class MqttPublisher {

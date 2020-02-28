@@ -79,11 +79,9 @@ function getSupply(oliId, zipCode, optimizationDate) {
                             case 6:
                                 supply = _a.sent();
                                 supply = JSON.parse(supply[0].data);
-                                console.log(supply.value);
                                 for (i = 0; i < supply.value.length; i++) {
                                     supply.value[i] *= weatherData.condition[i];
                                 }
-                                console.log(supply.value);
                                 res = supply;
                                 return [3 /*break*/, 8];
                             case 7:
@@ -243,10 +241,6 @@ function getWeatherDataFactors(zipCode, optimizationDate) {
                                 for (i = 1; i <= 96; i++) {
                                     weatherDataFactors.temperature.push(Math.round(spline.at(i) * 100) / 100);
                                 }
-                                //console.log(weatherDataFactors.temperature);
-                                //console.log(weatherDataFactors.condition);
-                                //console.log('lenght: ' + weatherDataFactors.temperature.length );
-                                //console.log('lenght: ' + weatherDataFactors.condition.length );
                                 resolve(weatherDataFactors);
                                 return [2 /*return*/];
                         }

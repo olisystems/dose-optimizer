@@ -9,10 +9,9 @@ var compression = require("compression");
 var session = require("express-session");
 var Keycloak = require("keycloak-connect");
 var routes = require('./api/rest/routes');
+var app = express();
 // app setups
 // -----------------------------------------------
-// express
-var app = express();
 // env
 app.get('env');
 if (process.env.NODE_ENV !== 'production') {

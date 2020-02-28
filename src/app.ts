@@ -10,15 +10,12 @@ import session = require('express-session');
 import Keycloak = require('keycloak-connect');
 import {config} from './config';
 
-const routes = require('./api/rest/routes');
-
+var routes = require('./api/rest/routes');
+var app: express.Application = express();
 
 
 // app setups
 // -----------------------------------------------
-
-// express
-const app: express.Application = express();
 
 
 // env
@@ -31,7 +28,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 // keycloak
 var memoryStore = new session.MemoryStore();                       
-let kcConfig = {
+var kcConfig = {
     clientId: 'tutorial-backend',
     bearerOnly: true,
     serverUrl: 'http://localhost:3015/auth/',

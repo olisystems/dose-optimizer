@@ -21,7 +21,6 @@ var IntervalsToTimestamps = /** @class */ (function () {
             this._IntervalTimestamps.push(startTime);
             startTime += (config_1.config.optimizationFrequency * 60 * 1000);
         }
-        // console.log(this._IntervalTimestamps)
     };
     return IntervalsToTimestamps;
 }());

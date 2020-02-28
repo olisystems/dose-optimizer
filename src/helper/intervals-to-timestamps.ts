@@ -21,17 +21,14 @@ export class IntervalsToTimestamps {
      */
     public createTimestamps(date: Date) {
         
-        var startTime: number  =  date.getTime() - (config.gmtTimeZone * 60 * 60 * 1000);
+        let startTime: number  =  date.getTime() - (config.gmtTimeZone * 60 * 60 * 1000);
+        let calcFreq: number = (60 * 60 * 24 * 1000) / (config.optimizationFrequency * 60 * 1000);
 
-        var calcFreq: number = (60 * 60 * 24 * 1000) / (config.optimizationFrequency * 60 * 1000);
-
-        for (var i: number = 1; i <= calcFreq; i++) {
+        for (let i: number = 1; i <= calcFreq; i++) {
 
             this._IntervalTimestamps.push(startTime);
             startTime += ( config.optimizationFrequency * 60 * 1000);
         }
-
-        // console.log(this._IntervalTimestamps)
     }
 
 }

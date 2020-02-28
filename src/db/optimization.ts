@@ -1,24 +1,25 @@
 
 import { IOptimizationFeed } from '../data-models/energy-profile';
-const sqlite3 = require('sqlite-async');
+var sqlite3 = require('sqlite-async');
 
 
 
 async function storeOptimization( tenant: string, startDate: string, optimizationFeed: IOptimizationFeed ) {
     
-    var res: object;
-    var db: any; 
-    var queryString = 'INSERT INTO "optimizations" ("tenant", "start_date", "in_progress", "data") VALUES (?, ?, ?, ?)';
+    let res: object;
+    let db: any; 
+    let queryString = 'INSERT INTO "optimizations" ("tenant", "start_date", "in_progress", "data") VALUES (?, ?, ?, ?)';
     
     return new Promise ( async  (resolve) => {
 
         try {
             db = await sqlite3.open("optimizations.db");
         } catch (error) {
-            res = {
+            await db.close();
+            resolve({
                 status: 500,
                 error: error
-            }
+            })
         }
 
         try {

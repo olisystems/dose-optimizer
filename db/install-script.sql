@@ -3,7 +3,8 @@ DROP TABLE IF EXISTS "tenant";
 CREATE TABLE "tenant" (
 	"pk"	TEXT NOT NULL UNIQUE,
 	"name"	TEXT NOT NULL,
-	"active"	INTEGER CHECK("active" IN (0, 1)),
+	"active"	INTEGER NOT NULL CHECK("active" IN (0, 1)),
+	"zip_code"	TEXT NOT NULL,
 	PRIMARY KEY("pk")
 );
 
@@ -51,6 +52,19 @@ CREATE TABLE "lu_weather_condition" (
 );
 
 
+DROP TABLE IF EXISTS "oli_device_meta_info";
+CREATE TABLE "oli_device_meta_info" (
+	"pk"	TEXT NOT NULL,
+	"tenant"	TEXT NOT NULL,
+	"range_start"	INTEGER NOT NULL,
+	"range_end"	INTEGER NOT NULL,
+	"max_power"	INTEGER NOT NULL,
+	"supply"	INTEGER NOT NULL CHECK("supply" IN (0, 1)),
+	PRIMARY KEY("pk"),
+	CONSTRAINT "fk_tenant" FOREIGN KEY("tenant") REFERENCES "tenant"("pk")
+);
+
+
 
 /* -------------------------------------------------------------------------------
 
@@ -92,13 +106,36 @@ VALUES ('OLI_1', 'OLI_32', '{"oliBox":"OLI_11","type":"activeEnery","interval":[
 -- insert weather conditions
 -- --------------------------------------------------
 
-delete from lu_weather_condition;
-insert into lu_weather_condition (factor, code, description) values (1, 1, 'Clear');
-insert into lu_weather_condition (factor, code, description) values (0.6, 2, 'Clouds');
-insert into lu_weather_condition (factor, code, description) values (0.6, 2, 'Drizzle');
-insert into lu_weather_condition (factor, code, description) values (0.1, 3, 'Rain');
-insert into lu_weather_condition (factor, code, description) values (0.1, 3, 'Thunderstorm');
-insert into lu_weather_condition (factor, code, description) values (0.1, 3, 'Snow');
+DELETE FROM "lu_weather_condition";
+
+INSERT INTO "lu_weather_condition" ("factor", "code", "description") VALUES (1, 1, 'Clear');
+INSERT INTO "lu_weather_condition" ("factor", "code", "description") VALUES (0.6, 2, 'Clouds');
+INSERT INTO "lu_weather_condition" ("factor", "code", "description") VALUES (0.6, 2, 'Drizzle');
+INSERT INTO "lu_weather_condition" ("factor", "code", "description") VALUES (0.1, 3, 'Rain');
+INSERT INTO "lu_weather_condition" ("factor", "code", "description") VALUES (0.1, 3, 'Thunderstorm');
+INSERT INTO "lu_weather_condition" ("factor", "code", "description") VALUES (0.1, 3, 'Snow');
+
+
+-- insert oli device meta info
+-- --------------------------------------------------
+
+DELETE FROM "oli_device_meta_info";
+
+INSERT INTO "oli_device_meta_info" ("pk", "tenant", "range_start", "range_end", "max_power", "supply")
+VALUES ('OLI_13', 'OLI_1', 45, 65, 1000, 0);
+INSERT INTO "oli_device_meta_info" ("pk", "tenant", "range_start", "range_end", "max_power", "supply")
+VALUES ('OLI_14', 'OLI_1', 40, 75, 2000, 0);
+
+INSERT INTO "oli_device_meta_info" ("pk", "tenant", "range_start", "range_end", "max_power", "supply")
+VALUES ('OLI_23', 'OLI_2', 45, 65, 1000, 0);
+INSERT INTO "oli_device_meta_info" ("pk", "tenant", "range_start", "range_end", "max_power", "supply")
+VALUES ('OLI_24', 'OLI_2', 40, 75, 2000, 0);
+
+INSERT INTO "oli_device_meta_info" ("pk", "tenant", "range_start", "range_end", "max_power", "supply")
+VALUES ('OLI_33', 'OLI_3', 45, 65, 1000, 0);
+INSERT INTO "oli_device_meta_info" ("pk", "tenant", "range_start", "range_end", "max_power", "supply")
+VALUES ('OLI_34', 'OLI_3', 40, 75, 2000, 0);
+
 
 
 
