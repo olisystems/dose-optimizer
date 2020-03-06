@@ -52,6 +52,15 @@ CREATE TABLE "lu_weather_condition" (
 );
 
 
+DROP TABLE IF EXISTS "lu_weather_temperature_factor";
+CREATE TABLE "lu_weather_temperature_factor" (
+	"factor"	REAL NOT NULL UNIQUE,
+	"min_temperature"	INTEGER NOT NULL UNIQUE,
+	"max_temperature"	INTEGER NOT NULL UNIQUE,
+	PRIMARY KEY("min_temperature", max_temperature)
+);
+
+
 DROP TABLE IF EXISTS "oli_device_meta_info";
 CREATE TABLE "oli_device_meta_info" (
 	"pk"	TEXT NOT NULL,
@@ -103,17 +112,28 @@ INSERT INTO "load_static" ("tenant", "oli_id", "data")
 VALUES ('OLI_1', 'OLI_32', '{"oliBox":"OLI_11","type":"activeEnery","interval":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96],"value":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,14,21,41,93,173,203,226,322,367,373,438,967,858,750,1577,1695,1736,1781,1794,1786,1768,1785,1778,1714,1687,1603,1492,1422,1290,1290,1005,821,844,677,525,355,229,146,82,22,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]}' );
 
 
--- insert weather conditions
+-- insert weather condition factors
 -- --------------------------------------------------
 
 DELETE FROM "lu_weather_condition";
-
 INSERT INTO "lu_weather_condition" ("factor", "code", "description") VALUES (1, 1, 'Clear');
 INSERT INTO "lu_weather_condition" ("factor", "code", "description") VALUES (0.6, 2, 'Clouds');
 INSERT INTO "lu_weather_condition" ("factor", "code", "description") VALUES (0.6, 2, 'Drizzle');
 INSERT INTO "lu_weather_condition" ("factor", "code", "description") VALUES (0.1, 3, 'Rain');
 INSERT INTO "lu_weather_condition" ("factor", "code", "description") VALUES (0.1, 3, 'Thunderstorm');
 INSERT INTO "lu_weather_condition" ("factor", "code", "description") VALUES (0.1, 3, 'Snow');
+
+
+-- insert weather temperature factors
+-- --------------------------------------------------
+
+DELETE FROM "lu_weather_temperature_factor";
+INSERT INTO "lu_weather_temperature_factor" ("factor", "min_temperature", "max_temperature") VALUES (0.5, -1000, -10);
+INSERT INTO "lu_weather_temperature_factor" ("factor", "min_temperature", "max_temperature") VALUES (0.6, -10, 0);
+INSERT INTO "lu_weather_temperature_factor" ("factor", "min_temperature", "max_temperature") VALUES (0.7, 0, 10);
+INSERT INTO "lu_weather_temperature_factor" ("factor", "min_temperature", "max_temperature") VALUES (0.85, 10, 20);
+INSERT INTO "lu_weather_temperature_factor" ("factor", "min_temperature", "max_temperature") VALUES (0.95, 20, 30);
+INSERT INTO "lu_weather_temperature_factor" ("factor", "min_temperature", "max_temperature") VALUES (0.9, 30, 1000);
 
 
 -- insert oli device meta info

@@ -15,6 +15,10 @@ var tenantInfo = require('../../db/tenant');
 // -----------------------------------------------
 
 /**
+ * Construct an optimization according to following workflow:
+ *  - construct optimization feed
+ *  - run optimizatoin
+ *  - store optimizaiton results
  * @param {any} req request
  */
 async function optimize(req: any ) {
@@ -31,7 +35,7 @@ async function optimize(req: any ) {
 
     return new Promise ( async (resolve) => {
         
-        // get local tenant data
+        // construct optimization feed 
         zipCode = await tenantInfo.getZipCode(req[0].tenant);
         if (zipCode.error) {
             resolve({

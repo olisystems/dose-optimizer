@@ -2,8 +2,11 @@
 var sqlite3 = require('sqlite-async');
 
 
-
-async function getWeatherConditionCode(conditionDescriptoin: string) {
+/**
+ * 
+ * @param {string} conditionDescriptoin discription of owm weather condition description
+ */
+async function getWeatherConditionFactors(conditionDescriptoin: string) {
     
     let res: any;
     let db: any; 
@@ -39,4 +42,38 @@ async function getWeatherConditionCode(conditionDescriptoin: string) {
 
 
 
-module.exports.getWeatherConditionCode = getWeatherConditionCode;
+async function getWeatherTemperatureFactors() {
+    
+    let res: any;
+    let db: any; 
+    let queryString = 'SELECT * FROM lu_weather_temperature_factor';
+    let weatherTemperatureFactors: any;
+    
+    return new Promise ( async  (resolve) => {
+
+        try {
+            
+            db = await sqlite3.open("optimizations.db");
+        } catch (error) {
+            
+            await db.close();
+            resolve({ error: error })
+        }
+
+        try {
+
+            weatherTemperatureFactors = await db.all(queryString);
+            res = weatherTemperatureFactors
+        } catch (error) {
+
+            res = { error: error }
+        }
+
+        await db.close();
+        resolve(res)
+    })
+}
+
+
+module.exports.getWeatherConditionFactors = getWeatherConditionFactors;
+module.exports.getWeatherTemperatureFactors = getWeatherTemperatureFactors;

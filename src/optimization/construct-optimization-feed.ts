@@ -20,13 +20,13 @@ async function getSupply( oliId: string, zipCode: string, optimizationDate: Date
     let db: any; 
     let queryString = 'SELECT data FROM "supply" WHERE oli_id = ?';
     let supply: any;
-    let weatherData: any;
+    let weatherDataFactors: any;
 
     return new Promise ( async  (resolve) => {
         
-        weatherData = await getWeatherDataFactors ( zipCode, optimizationDate )
-        if (weatherData.error) {
-            resolve(weatherData)    
+        weatherDataFactors = await getWeatherDataFactors ( zipCode, optimizationDate )
+        if (weatherDataFactors.error) {
+            resolve(weatherDataFactors)    
         } 
 
         try {
@@ -41,7 +41,7 @@ async function getSupply( oliId: string, zipCode: string, optimizationDate: Date
             supply = JSON.parse(supply[0].data)
             
             for (let i = 0; i < supply.value.length; i++ ) {
-                supply.value[i] *= weatherData.condition[i];
+                supply.value[i] *= weatherDataFactors.condition[i] * weatherDataFactors.temperature[i] ;
             }
 
             res = supply;
@@ -118,9 +118,9 @@ async function getWeatherData( zipCode: string ) {
 
 
 /**
- * Get weather in 3H Blocks and construct a cubic spline line interpolation
- * to construct 15 min weather blocks 
- * @param {string} zipCode postal code of tenant adress 
+ * Construct a cubic spline line interpolation to construct 15 min blocks from 3H weather blocks
+ * the 15 min blocks are multiplied by the factors of weather conditions and temperatures
+ * @param {string} zipCode postal code of tenant adress
  * @param {Data} optimizationDate - date of optimization
  */
 async function getWeatherDataFactors( zipCode: string, optimizationDate: Date ) {
@@ -136,39 +136,52 @@ async function getWeatherDataFactors( zipCode: string, optimizationDate: Date ) 
 
         let optimizationTimestamp = optimizationDate.getTime() / 1000;
         let tmpCnt: number = 0;
-        let weatherData: any = await getWeatherData ( zipCode );
-        let conditionCode: any;
+        let weatherData: any;
+        let conditionFactors: any;
+        let temperatureFactors: any;
+        let temperatureFactor: any;
         let weatherDataArr: any;
 
+        // get weather data
+        weatherData = await getWeatherData ( zipCode )
         if (weatherData.error) {
             resolve(weatherData);
         }
         
+        temperatureFactors = await weatherDB.getWeatherTemperatureFactors();
+        if (temperatureFactors.error) {
+            resolve(temperatureFactors);
+        }
+
+        // construct weather condition factors
         weatherDataArr = weatherData.data.list;
         for (let i = 0; i < weatherDataArr.length; i++ ) {
              
             if ( ( weatherDataArr[i].dt >= optimizationTimestamp ) && ( tmpCnt < 9 ) ) {
                 
-                ySpline.push(weatherDataArr[i].main.temp);
+                ySpline.push(weatherDataArr[i].main.temp)
                 
-                conditionCode = await weatherDB.getWeatherConditionCode(weatherDataArr[i].weather[0].main);
-                if (conditionCode.error) {
-                    resolve(conditionCode);
+                conditionFactors = await weatherDB.getWeatherConditionFactors(weatherDataArr[i].weather[0].main)
+                if (conditionFactors.error) {
+                    resolve(conditionFactors)
                 }
                 
                 tmpCnt += 1
                 if ( tmpCnt < 9 ) {
                     for ( let i: number = 1; i <= 12; i++ ) {
-                        weatherDataFactors.condition.push(conditionCode)
+                        weatherDataFactors.condition.push(conditionFactors)
                     }
                 }
+
             }
         };
 
+        // construct weather temperature factors
         const spline = new Spline(xSpline, ySpline);
-
         for ( let i: number = 1; i <= 96; i++ ) {
-            weatherDataFactors.temperature.push( Math.round( spline.at(i) * 100  ) / 100  );
+            let temperature = Math.round( spline.at(i) * 100  ) / 100
+            temperatureFactor = temperatureFactors.find( (factor: any) => factor.min_temperature < temperature && temperature <= factor.max_temperature ).factor
+            weatherDataFactors.temperature.push(temperatureFactor)
         }
 
         resolve(weatherDataFactors)
