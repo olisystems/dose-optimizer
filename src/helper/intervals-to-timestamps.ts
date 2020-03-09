@@ -16,7 +16,6 @@ export class IntervalsToTimestamps {
     }
 
     /**
-     *  Return 
      *  @param {Date} date - date for timestamp generation
      */
     public createTimestamps(date: Date) {

@@ -1,4 +1,7 @@
 
+// imports and constants
+// -----------------------------------------------
+
 import { IntervalsToTimestamps } from '../../helper/intervals-to-timestamps';
 
 var mqtt = require('mqtt')

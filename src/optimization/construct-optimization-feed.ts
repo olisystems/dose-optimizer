@@ -190,5 +190,6 @@ async function getWeatherDataFactors( zipCode: string, optimizationDate: Date ) 
 
 
 
+
 module.exports.getSupply = getSupply;
 module.exports.getStaticLoad = getStaticLoad;

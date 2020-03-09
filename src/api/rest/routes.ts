@@ -25,12 +25,6 @@ var keycloak = new Keycloak({ store: memoryStore });
  * protected 
  */
 router.post('/', /*keycloak.protect(),*/ async (req, res) => {
-
-    // TOTO: here goes a call to a request validation
-    // validate: 
-    //  - do all neccessary properties exist?
-    //  - is conntent of properties valid?
-    //  - is optimization date in 5 day timerange?
     
     let optimizationRes = await controlers.optimize(req.body);
 

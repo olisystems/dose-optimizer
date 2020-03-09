@@ -3,7 +3,12 @@ import { IOptimizationFeed } from '../data-models/energy-profile';
 var sqlite3 = require('sqlite-async');
 
 
-
+/**
+ * store an optimization into the local sqlite db
+ * @param {string} tenant 
+ * @param {string} startDate 
+ * @param {IOptimizationFeed} optimizationFeed 
+ */
 async function storeOptimization( tenant: string, startDate: string, optimizationFeed: IOptimizationFeed ) {
     
     let res: object;

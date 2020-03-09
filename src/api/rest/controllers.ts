@@ -122,32 +122,7 @@ async function optimize(req: any ) {
 
 
 
-
-// ------------------------------------------------------
-// TODO: remove this function
-let publishNo: number = 0;
-let publish: (i: number) => void = (i: number) => {
-    
-    publishNo += 1;
-
-    setTimeout(() => {
-
-        if (--i) {
-            
-            console.log('publishNo: ' + publishNo + ' -> ' + i);
-            publish(i);
-        }
-    }, 3000);
-
-};
-
-// ------------------------------------------------------
-
-
-
-
 // exports
 // -----------------------------------------------
 
 module.exports.optimize = optimize;
-module.exports.publish = publish;

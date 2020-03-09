@@ -3,6 +3,10 @@ var sqlite3 = require('sqlite-async');
 
 
 
+/**
+ * get zip code of tenant by oli id
+ * @param {string} oliId 
+ */
 async function getZipCode(oliId: string) {
     
     let res: any;
@@ -34,6 +38,10 @@ async function getZipCode(oliId: string) {
 }
 
 
+/**
+ * get metadata of air condition device by oli id
+ * @param {string} oliId 
+ */
 async function getAcMetaData(oliId: string) {
     
     let res: any;
@@ -68,6 +76,10 @@ async function getAcMetaData(oliId: string) {
 }
 
 
+/**
+ * get metadata of car loading station by oli id
+ * @param {string} oliId 
+ */
 async function getClMetaData(oliId: string) {
     
     let res: any;

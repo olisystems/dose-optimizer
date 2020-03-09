@@ -77,7 +77,6 @@ app.use((req, res, next) => {
 
 
 // test website for optoimization-plots
-// TODO: Remove for production version
 app.use('/test', express.static('./test/optimization-plots'));
 
 

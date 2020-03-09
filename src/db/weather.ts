@@ -3,7 +3,6 @@ var sqlite3 = require('sqlite-async');
 
 
 /**
- * 
  * @param {string} conditionDescriptoin discription of owm weather condition description
  */
 async function getWeatherConditionFactors(conditionDescriptoin: string) {
@@ -41,7 +40,9 @@ async function getWeatherConditionFactors(conditionDescriptoin: string) {
 }
 
 
-
+/**
+ * get factors for correcting pv supply based on weather conditions and temperatures
+ */
 async function getWeatherTemperatureFactors() {
     
     let res: any;
