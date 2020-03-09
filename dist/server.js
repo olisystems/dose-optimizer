@@ -1,10 +1,10 @@
 "use strict";
-// imports and constants
+// imports, constants and configurations
 // -----------------------------------------------
+require('dotenv').config();
 var http = require('http');
 var app = require('./app');
 var config = require('./config');
-require('dotenv').config();
 http.globalAgent.maxSockets = Infinity;
 // server
 // -----------------------------------------------

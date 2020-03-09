@@ -37,6 +37,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var sqlite3 = require('sqlite-async');
+/**
+ * store an optimization into the local sqlite db
+ * @param {string} tenant
+ * @param {string} startDate
+ * @param {IOptimizationFeed} optimizationFeed
+ */
 function storeOptimization(tenant, startDate, optimizationFeed) {
     return __awaiter(this, void 0, void 0, function () {
         var res, db, queryString;

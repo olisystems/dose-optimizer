@@ -11,7 +11,6 @@ var IntervalsToTimestamps = /** @class */ (function () {
         this._IntervalTimestamps = [];
     }
     /**
-     *  Return
      *  @param {Date} date - date for timestamp generation
      */
     IntervalsToTimestamps.prototype.createTimestamps = function (date) {

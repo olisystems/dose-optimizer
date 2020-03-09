@@ -48,7 +48,7 @@ var weatherDB = require('../db/weather');
  */
 function getSupply(oliId, zipCode, optimizationDate) {
     return __awaiter(this, void 0, void 0, function () {
-        var res, db, queryString, supply, weatherData;
+        var res, db, queryString, supply, weatherDataFactors;
         var _this = this;
         return __generator(this, function (_a) {
             queryString = 'SELECT data FROM "supply" WHERE oli_id = ?';
@@ -58,9 +58,9 @@ function getSupply(oliId, zipCode, optimizationDate) {
                         switch (_a.label) {
                             case 0: return [4 /*yield*/, getWeatherDataFactors(zipCode, optimizationDate)];
                             case 1:
-                                weatherData = _a.sent();
-                                if (weatherData.error) {
-                                    resolve(weatherData);
+                                weatherDataFactors = _a.sent();
+                                if (weatherDataFactors.error) {
+                                    resolve(weatherDataFactors);
                                 }
                                 _a.label = 2;
                             case 2:
@@ -80,7 +80,7 @@ function getSupply(oliId, zipCode, optimizationDate) {
                                 supply = _a.sent();
                                 supply = JSON.parse(supply[0].data);
                                 for (i = 0; i < supply.value.length; i++) {
-                                    supply.value[i] *= weatherData.condition[i];
+                                    supply.value[i] *= weatherDataFactors.condition[i] * weatherDataFactors.temperature[i];
                                 }
                                 res = supply;
                                 return [3 /*break*/, 8];
@@ -183,8 +183,8 @@ function getWeatherData(zipCode) {
     });
 }
 /**
- * Get weather in 3H Blocks and construct a cubic spline line interpolation
- * to construct 15 min weather blocks
+ * Construct a cubic spline line interpolation to construct 15 min blocks from 3H weather blocks
+ * the 15 min blocks are multiplied by the factors of weather conditions and temperatures
  * @param {string} zipCode postal code of tenant adress
  * @param {Data} optimizationDate - date of optimization
  */
@@ -200,7 +200,7 @@ function getWeatherDataFactors(zipCode, optimizationDate) {
             xSpline = [6, 18, 30, 42, 54, 66, 78, 90, 102];
             ySpline = [];
             return [2 /*return*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
-                    var optimizationTimestamp, tmpCnt, weatherData, conditionCode, weatherDataArr, i, i_1, spline, i;
+                    var optimizationTimestamp, tmpCnt, weatherData, conditionFactors, temperatureFactors, temperatureFactor, weatherDataArr, i, i_1, spline, _loop_1, i;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0:
@@ -208,38 +208,51 @@ function getWeatherDataFactors(zipCode, optimizationDate) {
                                 tmpCnt = 0;
                                 return [4 /*yield*/, getWeatherData(zipCode)];
                             case 1:
+                                // get weather data
                                 weatherData = _a.sent();
                                 if (weatherData.error) {
                                     resolve(weatherData);
                                 }
+                                return [4 /*yield*/, weatherDB.getWeatherTemperatureFactors()];
+                            case 2:
+                                temperatureFactors = _a.sent();
+                                if (temperatureFactors.error) {
+                                    resolve(temperatureFactors);
+                                }
+                                // construct weather condition factors
                                 weatherDataArr = weatherData.data.list;
                                 i = 0;
-                                _a.label = 2;
-                            case 2:
-                                if (!(i < weatherDataArr.length)) return [3 /*break*/, 5];
-                                if (!((weatherDataArr[i].dt >= optimizationTimestamp) && (tmpCnt < 9))) return [3 /*break*/, 4];
-                                ySpline.push(weatherDataArr[i].main.temp);
-                                return [4 /*yield*/, weatherDB.getWeatherConditionCode(weatherDataArr[i].weather[0].main)];
+                                _a.label = 3;
                             case 3:
-                                conditionCode = _a.sent();
-                                if (conditionCode.error) {
-                                    resolve(conditionCode);
+                                if (!(i < weatherDataArr.length)) return [3 /*break*/, 6];
+                                if (!((weatherDataArr[i].dt >= optimizationTimestamp) && (tmpCnt < 9))) return [3 /*break*/, 5];
+                                ySpline.push(weatherDataArr[i].main.temp);
+                                return [4 /*yield*/, weatherDB.getWeatherConditionFactors(weatherDataArr[i].weather[0].main)];
+                            case 4:
+                                conditionFactors = _a.sent();
+                                if (conditionFactors.error) {
+                                    resolve(conditionFactors);
                                 }
                                 tmpCnt += 1;
                                 if (tmpCnt < 9) {
                                     for (i_1 = 1; i_1 <= 12; i_1++) {
-                                        weatherDataFactors.condition.push(conditionCode);
+                                        weatherDataFactors.condition.push(conditionFactors);
                                     }
                                 }
-                                _a.label = 4;
-                            case 4:
-                                i++;
-                                return [3 /*break*/, 2];
+                                _a.label = 5;
                             case 5:
+                                i++;
+                                return [3 /*break*/, 3];
+                            case 6:
                                 ;
                                 spline = new Spline(xSpline, ySpline);
+                                _loop_1 = function (i) {
+                                    var temperature = Math.round(spline.at(i) * 100) / 100;
+                                    temperatureFactor = temperatureFactors.find(function (factor) { return factor.min_temperature < temperature && temperature <= factor.max_temperature; }).factor;
+                                    weatherDataFactors.temperature.push(temperatureFactor);
+                                };
                                 for (i = 1; i <= 96; i++) {
-                                    weatherDataFactors.temperature.push(Math.round(spline.at(i) * 100) / 100);
+                                    _loop_1(i);
                                 }
                                 resolve(weatherDataFactors);
                                 return [2 /*return*/];

@@ -39,23 +39,57 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var optimizer_1 = require("../../optimization/optimizer");
-var optimizationDb = require('../../db/optimization');
 var constructOptimizationFeed = require('../../optimization/construct-optimization-feed');
+var errors = require('../../assets/responses/errors.json');
+var optimizationDb = require('../../db/optimization');
+var tenantInfo = require('../../db/tenant');
 // POST
 // -----------------------------------------------
 /**
+ * Construct an optimization according to following workflow:
+ *  - construct optimization feed
+ *  - run optimizatoin
+ *  - store optimizaiton results
  * @param {any} req request
  */
 function optimize(req) {
     return __awaiter(this, void 0, void 0, function () {
-        var optimizer, optimization, storeOptimizationRes, supply, loadStatic, zipCode;
+        var optimizer, optimization, storeOptimizationRes, zipCode, acMetaData, clMetaData, supply, loadStatic;
         var _this = this;
         return __generator(this, function (_a) {
             return [2 /*return*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
                     return __generator(this, function (_a) {
                         switch (_a.label) {
-                            case 0: return [4 /*yield*/, constructOptimizationFeed.getStaticLoad(req[0].loadStaticId)];
+                            case 0: return [4 /*yield*/, tenantInfo.getZipCode(req[0].tenant)];
                             case 1:
+                                // construct optimization feed 
+                                zipCode = _a.sent();
+                                if (zipCode.error) {
+                                    resolve({
+                                        status: 500,
+                                        error: zipCode.error
+                                    });
+                                }
+                                return [4 /*yield*/, tenantInfo.getAcMetaData(req[0].acDemand.oliBox)];
+                            case 2:
+                                acMetaData = _a.sent();
+                                if (acMetaData.error) {
+                                    resolve({
+                                        status: 500,
+                                        error: acMetaData.error
+                                    });
+                                }
+                                return [4 /*yield*/, tenantInfo.getClMetaData(req[0].clDemand.oliBox)];
+                            case 3:
+                                clMetaData = _a.sent();
+                                if (clMetaData.error) {
+                                    resolve({
+                                        status: 500,
+                                        error: clMetaData.error
+                                    });
+                                }
+                                return [4 /*yield*/, constructOptimizationFeed.getStaticLoad(req[0].loadStaticId)];
+                            case 4:
                                 loadStatic = _a.sent();
                                 if (loadStatic.error) {
                                     resolve({
@@ -63,9 +97,8 @@ function optimize(req) {
                                         error: loadStatic.error
                                     });
                                 }
-                                return [4 /*yield*/, constructOptimizationFeed.getSupply(req[0].supplyId, '83471', new Date(req[0].startDate))];
-                            case 2:
-                                // TODO: zip has to token out of the database
+                                return [4 /*yield*/, constructOptimizationFeed.getSupply(req[0].supplyId, zipCode, new Date(req[0].startDate))];
+                            case 5:
                                 supply = _a.sent();
                                 if (supply.error) {
                                     resolve({
@@ -73,19 +106,29 @@ function optimize(req) {
                                         error: supply.error
                                     });
                                 }
+                                // run optimization
                                 optimizer = new optimizer_1.Optimizer({
                                     supply: supply,
                                     loadStatic: loadStatic,
                                     acDemand: req[0].acDemand,
                                     clDemand: req[0].clDemand,
-                                    acTimeRange: req[0].acTimeRange,
-                                    clTimeRange: req[0].clTimeRange,
-                                    acMaxLoad: req[0].acMaxLoad,
-                                    clMaxLoad: req[0].clMaxLoad
+                                    acTimeRange: acMetaData.timeRange,
+                                    clTimeRange: clMetaData.timeRange,
+                                    acMaxLoad: acMetaData.maxLoad,
+                                    clMaxLoad: clMetaData.maxLoad
                                 });
-                                optimization = optimizer.getOptimization();
+                                try {
+                                    optimization = optimizer.getOptimization();
+                                }
+                                catch (error) {
+                                    resolve({
+                                        status: 400,
+                                        error: errors.invalidRequestParameter
+                                    });
+                                }
                                 return [4 /*yield*/, optimizationDb.storeOptimization(req[0].tenant, req[0].startDate, optimization)];
-                            case 3:
+                            case 6:
+                                // store optimization results
                                 storeOptimizationRes = _a.sent();
                                 if (storeOptimizationRes.error) {
                                     resolve({
@@ -108,20 +151,6 @@ function optimize(req) {
         });
     });
 }
-// ------------------------------------------------------
-// TODO: remove this function
-var publishNo = 0;
-var publish = function (i) {
-    publishNo += 1;
-    setTimeout(function () {
-        if (--i) {
-            console.log('publishNo: ' + publishNo + ' -> ' + i);
-            publish(i);
-        }
-    }, 3000);
-};
-// ------------------------------------------------------
 // exports
 // -----------------------------------------------
 module.exports.optimize = optimize;
-module.exports.publish = publish;

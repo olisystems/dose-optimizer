@@ -1,6 +1,6 @@
 
 import { IOptimizationFeed } from '../data-models/energy-profile';
-import { MqttPublisher } from "../api/mqtt/mqtt-publisher";
+
 
 export class Optimizer {
 
@@ -281,17 +281,6 @@ export class Optimizer {
 
         // return optimized cl values
         return optimizedDemandValues;
-    }
-
-    
-    // TODO: remove the following function and from everywhere, where its imported
-    public publishOptimization () {
-
-        let publisher: MqttPublisher = new MqttPublisher();
-        for (let i: number = 1; i < 2; i++) {
-            publisher.publish('DOSE/OLI_34/ChargingStation/setOutputLimit', '{"key1": "val1", "key2": "val2", "key3": "val3"}');
-        }
-        
     }
 
 }

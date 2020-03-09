@@ -36,6 +36,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 var sqlite3 = require('sqlite-async');
+/**
+ * get zip code of tenant by oli id
+ * @param {string} oliId
+ */
 function getZipCode(oliId) {
     return __awaiter(this, void 0, void 0, function () {
         var res, db, queryString, zipCode;
@@ -64,7 +68,7 @@ function getZipCode(oliId) {
                                 return [4 /*yield*/, db.all(queryString, oliId)];
                             case 5:
                                 zipCode = _a.sent();
-                                res = zipCode[0];
+                                res = zipCode[0].zip_code;
                                 return [3 /*break*/, 7];
                             case 6:
                                 error_2 = _a.sent();
@@ -81,4 +85,110 @@ function getZipCode(oliId) {
         });
     });
 }
+/**
+ * get metadata of air condition device by oli id
+ * @param {string} oliId
+ */
+function getAcMetaData(oliId) {
+    return __awaiter(this, void 0, void 0, function () {
+        var res, db, queryString, acMetaData;
+        var _this = this;
+        return __generator(this, function (_a) {
+            queryString = 'SELECT range_start, range_end, max_power FROM oli_device_meta_info WHERE pk = ?';
+            return [2 /*return*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
+                    var error_3, error_4;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0:
+                                _a.trys.push([0, 2, , 4]);
+                                return [4 /*yield*/, sqlite3.open("optimizations.db")];
+                            case 1:
+                                db = _a.sent();
+                                return [3 /*break*/, 4];
+                            case 2:
+                                error_3 = _a.sent();
+                                return [4 /*yield*/, db.close()];
+                            case 3:
+                                _a.sent();
+                                resolve({ error: error_3 });
+                                return [3 /*break*/, 4];
+                            case 4:
+                                _a.trys.push([4, 6, , 7]);
+                                return [4 /*yield*/, db.all(queryString, oliId)];
+                            case 5:
+                                acMetaData = _a.sent();
+                                res = {
+                                    timeRange: [acMetaData[0].range_start, acMetaData[0].range_end],
+                                    maxLoad: acMetaData[0].max_power
+                                };
+                                return [3 /*break*/, 7];
+                            case 6:
+                                error_4 = _a.sent();
+                                res = { error: error_4 };
+                                return [3 /*break*/, 7];
+                            case 7: return [4 /*yield*/, db.close()];
+                            case 8:
+                                _a.sent();
+                                resolve(res);
+                                return [2 /*return*/];
+                        }
+                    });
+                }); })];
+        });
+    });
+}
+/**
+ * get metadata of car loading station by oli id
+ * @param {string} oliId
+ */
+function getClMetaData(oliId) {
+    return __awaiter(this, void 0, void 0, function () {
+        var res, db, queryString, clMetaData;
+        var _this = this;
+        return __generator(this, function (_a) {
+            queryString = 'SELECT range_start, range_end, max_power FROM oli_device_meta_info WHERE pk = ?';
+            return [2 /*return*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
+                    var error_5, error_6;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0:
+                                _a.trys.push([0, 2, , 4]);
+                                return [4 /*yield*/, sqlite3.open("optimizations.db")];
+                            case 1:
+                                db = _a.sent();
+                                return [3 /*break*/, 4];
+                            case 2:
+                                error_5 = _a.sent();
+                                return [4 /*yield*/, db.close()];
+                            case 3:
+                                _a.sent();
+                                resolve({ error: error_5 });
+                                return [3 /*break*/, 4];
+                            case 4:
+                                _a.trys.push([4, 6, , 7]);
+                                return [4 /*yield*/, db.all(queryString, oliId)];
+                            case 5:
+                                clMetaData = _a.sent();
+                                res = {
+                                    timeRange: [clMetaData[0].range_start, clMetaData[0].range_end],
+                                    maxLoad: clMetaData[0].max_power
+                                };
+                                return [3 /*break*/, 7];
+                            case 6:
+                                error_6 = _a.sent();
+                                res = { error: error_6 };
+                                return [3 /*break*/, 7];
+                            case 7: return [4 /*yield*/, db.close()];
+                            case 8:
+                                _a.sent();
+                                resolve(res);
+                                return [2 /*return*/];
+                        }
+                    });
+                }); })];
+        });
+    });
+}
 module.exports.getZipCode = getZipCode;
+module.exports.getAcMetaData = getAcMetaData;
+module.exports.getClMetaData = getClMetaData;

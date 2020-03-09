@@ -7,7 +7,6 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
     return r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var mqtt_publisher_1 = require("../api/mqtt/mqtt-publisher");
 var Optimizer = /** @class */ (function () {
     // constructor
     function Optimizer(optimizatoinFeed) {
@@ -199,12 +198,6 @@ var Optimizer = /** @class */ (function () {
         }
         // return optimized cl values
         return optimizedDemandValues;
-    };
-    Optimizer.prototype.publishOptimization = function () {
-        var publisher = new mqtt_publisher_1.MqttPublisher();
-        for (var i = 1; i < 2; i++) {
-            publisher.publish('DOSE/OLI_34/ChargingStation/setOutputLimit', '{"key1": "val1", "key2": "val2", "key3": "val3"}');
-        }
     };
     return Optimizer;
 }());

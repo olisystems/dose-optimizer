@@ -36,7 +36,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 var sqlite3 = require('sqlite-async');
-function getWeatherConditionCode(conditionDescriptoin) {
+/**
+ * @param {string} conditionDescriptoin discription of owm weather condition description
+ */
+function getWeatherConditionFactors(conditionDescriptoin) {
     return __awaiter(this, void 0, void 0, function () {
         var res, db, queryString, weatherConditions;
         var _this = this;
@@ -86,4 +89,53 @@ function getWeatherConditionCode(conditionDescriptoin) {
         });
     });
 }
-module.exports.getWeatherConditionCode = getWeatherConditionCode;
+/**
+ * get factors for correcting pv supply based on weather conditions and temperatures
+ */
+function getWeatherTemperatureFactors() {
+    return __awaiter(this, void 0, void 0, function () {
+        var res, db, queryString, weatherTemperatureFactors;
+        var _this = this;
+        return __generator(this, function (_a) {
+            queryString = 'SELECT * FROM lu_weather_temperature_factor';
+            return [2 /*return*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
+                    var error_3, error_4;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0:
+                                _a.trys.push([0, 2, , 4]);
+                                return [4 /*yield*/, sqlite3.open("optimizations.db")];
+                            case 1:
+                                db = _a.sent();
+                                return [3 /*break*/, 4];
+                            case 2:
+                                error_3 = _a.sent();
+                                return [4 /*yield*/, db.close()];
+                            case 3:
+                                _a.sent();
+                                resolve({ error: error_3 });
+                                return [3 /*break*/, 4];
+                            case 4:
+                                _a.trys.push([4, 6, , 7]);
+                                return [4 /*yield*/, db.all(queryString)];
+                            case 5:
+                                weatherTemperatureFactors = _a.sent();
+                                res = weatherTemperatureFactors;
+                                return [3 /*break*/, 7];
+                            case 6:
+                                error_4 = _a.sent();
+                                res = { error: error_4 };
+                                return [3 /*break*/, 7];
+                            case 7: return [4 /*yield*/, db.close()];
+                            case 8:
+                                _a.sent();
+                                resolve(res);
+                                return [2 /*return*/];
+                        }
+                    });
+                }); })];
+        });
+    });
+}
+module.exports.getWeatherConditionFactors = getWeatherConditionFactors;
+module.exports.getWeatherTemperatureFactors = getWeatherTemperatureFactors;

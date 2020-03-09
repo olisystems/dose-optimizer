@@ -1,4 +1,6 @@
 "use strict";
+// imports and constants
+// -----------------------------------------------
 Object.defineProperty(exports, "__esModule", { value: true });
 var intervals_to_timestamps_1 = require("../../helper/intervals-to-timestamps");
 var mqtt = require('mqtt');
