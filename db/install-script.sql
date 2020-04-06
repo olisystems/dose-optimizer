@@ -19,6 +19,17 @@ CREATE TABLE "optimizations" (
 	PRIMARY KEY("pk" AUTOINCREMENT),
 	CONSTRAINT "fk_tenant" FOREIGN KEY("tenant") REFERENCES "tenant"("pk")
 );
+CREATE UNIQUE INDEX "unique_tenant_start_date" ON "optimizations"("tenant", "start_date");
+
+
+DROP VIEW IF EXISTS "v_optimizations";
+CREATE VIEW v_optimizations AS
+SELECT 
+	pk,
+	tenant,
+	start_date as startDate, 
+	in_progress as inProgress
+FROM optimizations;
 
 
 DROP TABLE IF EXISTS "load_static";

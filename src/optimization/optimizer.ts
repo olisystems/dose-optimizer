@@ -1,7 +1,6 @@
 
 import { IOptimizationFeed } from '../data-models/energy-profile';
 
-
 export class Optimizer {
 
     // fields

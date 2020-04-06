@@ -1,395 +1,65 @@
 
+/**
+ * NOTE: If used mock data already exist in database, they must be removed befor unit testing
+ */
+
+
+require('dotenv').config();
 var request = require('request');
 var assert = require('chai').assert;
 var expect = require('chai').expect;
 var mockData = require('./mock-data');
-require('dotenv').config();
-var url = `${process.env.SERVER_HOST}:${process.env.SERVER_PORT}/${process.env.API_VERSION}`;
+var url = `${process.env.SERVER_HOST}:${process.env.SERVER_PORT}/${process.env.API_VERSION}/optimizations`;
 
 
 
-describe('Scenario 1', function() {
+describe('Post request response', function() {
     
-    var optimizationFeed = mockData.optimizationFeeds[0];
+    it('Properties', async function() {
+
+        let optimizationResponse = await request.post(url, { json: [mockData.optimizationFeeds[0]] })
+        optimizationResponse = JSON.parse(optimizationResponse.body)
+        optimization = optimizationResponse[0]
+
+        expect(optimization).to.have.all.keys('loadStaticId', 'startDate', 'supplyId', 'tenant', 'supply', 'loadStatic', 'acDemand', 'clDemand', 'acTimeRange', 'clTimeRange', 'acMaxLoad', 'clMaxLoad');
+        expect(optimization.supply).to.have.all.keys('oliBox', 'type', 'interval', 'value');
+        expect(optimization.loadStatic).to.have.all.keys('oliBox', 'type', 'interval', 'value');
+        expect(optimization.acDemand).to.have.all.keys('oliBox', 'type', 'interval', 'value');
+        expect(optimization.clDemand).to.have.all.keys('oliBox', 'type', 'interval', 'value');
+        assert.isArray(optimization.acTimeRange, 'property acTimeRange exists and is Array');
+        assert.isArray(optimization.clTimeRange, 'property clTimeRange exists and is Array');
+        assert.typeOf(optimization.acMaxLoad, 'number', 'property acMaxLoad exists and is number');
+        assert.typeOf(optimization.clMaxLoad, 'number', 'property clMaxLoad exists and is number');        
+    });
+
+    it('Structure', async function() {
+            
+        let optimizationResponse = await request.post(url, { json: [mockData.optimizationFeeds[1]] })
+        optimizationResponse = JSON.parse(optimizationResponse.body)
+        optimization = optimizationResponse[0]
+
+        assert.lengthOf(optimization.supply.value, 96, 'supply values has length of 96');
+        assert.lengthOf(optimization.loadStatic.value, 96, 'loadStatic values has length of 96');
+        assert.lengthOf(optimization.acDemand.value, 96, 'acDemand values has length of 96');
+        assert.lengthOf(optimization.clDemand.value, 96, 'clDemand values has length of 96');
+    });
     
-    describe('Response data structure', function() {
+    it('Content', async function() {
+        
+        const reducer = (accumulator, currentValue) => accumulator + currentValue;
+        let optimizationFeed = mockData.optimizationFeeds[2];
+        let optimizationResponse = await request.post(url, { json: [mockData.optimizationFeeds[2]] });
+        optimizationResponse = JSON.parse(optimizationResponse.body);
+        optimization = optimizationResponse[0];
 
-        it('Properties', function(done) {
-            
-            request.post(url, { json: [optimizationFeed] }, function(error, response, body) {
-                
-                if (error) {
-                    console.log(error);
-                }
+        sumUnoptiSupply =  optimizationFeed.supply.value.reduce(reducer);
+        sumOptiSupply =  optimization.supply.value.reduce(reducer);
+        sumUnoptiLoadStatic =  optimizationFeed.loadStatic.value.reduce(reducer);
+        sumOptiLoadStatic =  optimization.loadStatic.value.reduce(reducer);
+        sumUnoptiAcDemand =  optimizationFeed.acDemand.value.reduce(reducer);
+        sumOptiAcDemand =  optimization.acDemand.value.reduce(reducer);
+        sumUnoptiClDemand =  optimizationFeed.clDemand.value.reduce(reducer);
+        sumOptiClDemand =  optimization.clDemand.value.reduce(reducer);
+    });
 
-                let optimization = body[0]
-
-                assert.notExists(error, 'error is undefined');
-                expect(optimization).to.have.all.keys('supply', 'loadStatic', 'acDemand', 'clDemand', 'acTimeRange', 'clTimeRange', 'acMaxLoad', 'clMaxLoad');
-                expect(optimization.supply).to.have.all.keys('oliBox', 'type', 'interval', 'value');
-                expect(optimization.loadStatic).to.have.all.keys('oliBox', 'type', 'interval', 'value');
-                expect(optimization.acDemand).to.have.all.keys('oliBox', 'type', 'interval', 'value');
-                expect(optimization.clDemand).to.have.all.keys('oliBox', 'type', 'interval', 'value');
-                assert.isArray(optimization.acTimeRange, 'property acTimeRange exists and is Array');
-                assert.isArray(optimization.clTimeRange, 'property clTimeRange exists and is Array');
-                assert.typeOf(optimization.acMaxLoad, 'number', 'property acMaxLoad exists and is number');
-                assert.typeOf(optimization.clMaxLoad, 'number', 'property clMaxLoad exists and is number');
-
-                done();
-            })
-        });
-
-        it('Structure', function(done) {
-            
-            request.post(url, { json: [optimizationFeed] }, function(error, response, body) {
-                
-                if (error) {
-                    console.log(error);
-                }
-
-                let optimization = body[0];
-
-                assert.lengthOf(body, 1, 'response body has length of 1');
-                assert.lengthOf(optimization.supply.value, 96, 'supply values has length of 6');
-                assert.lengthOf(optimization.loadStatic.value, 96, 'loadStatic values has length of 6');
-                assert.lengthOf(optimization.acDemand.value, 96, 'acDemand values has length of 6');
-                assert.lengthOf(optimization.clDemand.value, 96, 'clDemand values has length of 6');
-                
-                done();
-            })
-        });
-
-        it('Content', function(done) {
-            
-            request.post(url, { json: [optimizationFeed] }, function(error, response, body) {
-                
-                if (error) {
-                    console.log(error);
-                }
-
-                let optimized = body[0];    
-
-                const reducer = (accumulator, currentValue) => accumulator + currentValue;            
-
-                sumUnoptiSupply =  optimizationFeed.supply.value.reduce(reducer);
-                sumOptiSupply =  optimized.supply.value.reduce(reducer);
-                sumUnoptiLoadStatic =  optimizationFeed.loadStatic.value.reduce(reducer);
-                sumOptiLoadStatic =  optimized.loadStatic.value.reduce(reducer);
-                sumUnoptiAcDemand =  optimizationFeed.acDemand.value.reduce(reducer);
-                sumOptiAcDemand =  optimized.acDemand.value.reduce(reducer);
-                sumUnoptiClDemand =  optimizationFeed.clDemand.value.reduce(reducer);
-                sumOptiClDemand =  optimized.clDemand.value.reduce(reducer);
-                
-                expect(optimized.acTimeRange).to.deep.equal(optimizationFeed.acTimeRange, 'unoptimized and optimized acTimeRange values are the same');
-                expect(optimized.clTimeRange).to.deep.equal(optimizationFeed.clTimeRange, 'unoptimized and optimized clTimeRange values are the same');
-                expect(optimized.acMaxLoad).to.deep.equal(optimizationFeed.acMaxLoad, 'unoptimized and optimized acMaxLoad values are the same');
-                expect(optimized.clMaxLoad).to.deep.equal(optimizationFeed.clMaxLoad, 'unoptimized and optimized clMaxLoad values are the same');
-                //expect(sumUnoptiSupply).to.deep.equal(sumOptiSupply, 'sum of unoptimized and optimized supply values are the same');
-                //expect(sumUnoptiLoadStatic).to.deep.equal(sumOptiLoadStatic, 'sum of unoptimized and optimized loadStatic values are the same');
-                //expect(sumUnoptiAcDemand).to.deep.equal(sumOptiAcDemand, 'sum of unoptimized and optimized acDemand values are the same');
-                //expect(sumUnoptiClDemand).to.deep.equal(sumOptiClDemand, 'sum of unoptimized and optimized clDemand values are the same');
-                
-                done();
-            })
-        });
-
-        it('Rules', function(done) {
-            
-            request.post(url, { json: [optimizationFeed] }, function(error, response, body) {
-                
-                if (error) {
-                    console.log(error);
-                }
-
-                var optimization = body[0];    
-                var startClRange = Math.min(...optimizationFeed.clTimeRange);
-                var startAcRange = Math.min(...optimizationFeed.acTimeRange);
-                let endAcRange = Math.max(...optimizationFeed.acTimeRange);
-                let endClRange = Math.max(...optimizationFeed.clTimeRange);
-                var startClOptimizationInterval = optimization.clDemand.value.findIndex(function(number) {return number > 0;}) + 1;
-                var startAcOptimizationInterval = optimization.acDemand.value.findIndex(function(number) {return number > 0;}) + 1;
-                var endClOptimizationInterval;
-                var endAcOptimizationInterval;
-                
-                for (i = optimization.clDemand.value.length - 1; i >= 0; i--) {
-                    if (optimization.clDemand.value[i] > 0) {
-                        endClOptimizationInterval = i + 1;
-                        break;
-                    }
-                }
-                
-                for (i = optimization.acDemand.value.length - 1; i >= 0; i--) {
-                    if (optimization.acDemand.value[i] > 0) {
-                        endAcOptimizationInterval = i + 1;
-                        break;
-                    }
-                }
-
-                assert(startClOptimizationInterval >= startClRange, 'in correct start interval for cl optimization');
-                assert(startAcOptimizationInterval >= startAcRange, 'in correct start interval for ac optimization');
-                assert(endClOptimizationInterval <= endClRange, 'in correct end interval for cl optimization');
-                assert(endAcOptimizationInterval <= endAcRange, 'in correct end interval for ac optimization');
-
-                done();
-            })
-        });
-    })
-})
-
-
-describe('Scenario 2', function() {
-    
-    var optimizationFeed = mockData.optimizationFeeds[1];
-    
-    describe('Response data structure', function() {
-
-        it('Properties', function(done) {
-            
-            request.post(url, { json: [optimizationFeed] }, function(error, response, body) {
-                
-                if (error) {
-                    console.log(error);
-                }
-
-                let optimization = body[0]
-
-                assert.notExists(error, 'error is undefined');
-                expect(optimization).to.have.all.keys('supply', 'loadStatic', 'acDemand', 'clDemand', 'acTimeRange', 'clTimeRange', 'acMaxLoad', 'clMaxLoad');
-                expect(optimization.supply).to.have.all.keys('oliBox', 'type', 'interval', 'value');
-                expect(optimization.loadStatic).to.have.all.keys('oliBox', 'type', 'interval', 'value');
-                expect(optimization.acDemand).to.have.all.keys('oliBox', 'type', 'interval', 'value');
-                expect(optimization.clDemand).to.have.all.keys('oliBox', 'type', 'interval', 'value');
-                assert.isArray(optimization.acTimeRange, 'property acTimeRange exists and is Array');
-                assert.isArray(optimization.clTimeRange, 'property clTimeRange exists and is Array');
-                assert.typeOf(optimization.acMaxLoad, 'number', 'property acMaxLoad exists and is number');
-                assert.exists(optimization.clMaxLoad, 'number', 'property clMaxLoad exists and is number');
-
-                done();
-            })
-        });
-
-        it('Structure', function(done) {
-            
-            request.post(url, { json: [optimizationFeed] }, function(error, response, body) {
-                
-                if (error) {
-                    console.log(error);
-                }
-
-                let optimization = body[0];
-
-                assert.lengthOf(body, 1, 'response body has length of 1');
-                assert.lengthOf(optimization.supply.value, 96, 'supply values has length of 6');
-                assert.lengthOf(optimization.loadStatic.value, 96, 'loadStatic values has length of 6');
-                assert.lengthOf(optimization.acDemand.value, 96, 'acDemand values has length of 6');
-                assert.lengthOf(optimization.clDemand.value, 96, 'clDemand values has length of 6');
-                
-                done();
-            })
-        });
-
-        it('Content', function(done) {
-            
-            request.post(url, { json: [optimizationFeed] }, function(error, response, body) {
-                
-                if (error) {
-                    console.log(error);
-                }
-
-                let optimized = body[0];    
-
-                const reducer = (accumulator, currentValue) => accumulator + currentValue;            
-
-                sumUnoptiSupply =  optimizationFeed.supply.value.reduce(reducer);
-                sumOptiSupply =  optimized.supply.value.reduce(reducer);
-                sumUnoptiLoadStatic =  optimizationFeed.loadStatic.value.reduce(reducer);
-                sumOptiLoadStatic =  optimized.loadStatic.value.reduce(reducer);
-                sumUnoptiAcDemand =  optimizationFeed.acDemand.value.reduce(reducer);
-                sumOptiAcDemand =  optimized.acDemand.value.reduce(reducer);
-                sumUnoptiClDemand =  optimizationFeed.clDemand.value.reduce(reducer);
-                sumOptiClDemand =  optimized.clDemand.value.reduce(reducer);
-
-                expect(optimized.acTimeRange).to.deep.equal(optimizationFeed.acTimeRange, 'unoptimized and optimized acTimeRange values are the same');
-                expect(optimized.clTimeRange).to.deep.equal(optimizationFeed.clTimeRange, 'unoptimized and optimized clTimeRange values are the same');
-                expect(optimized.acMaxLoad).to.deep.equal(optimizationFeed.acMaxLoad, 'unoptimized and optimized acMaxLoad values are the same');
-                expect(optimized.clMaxLoad).to.deep.equal(optimizationFeed.clMaxLoad, 'unoptimized and optimized clMaxLoad values are the same');
-                //expect(sumUnoptiSupply).to.deep.equal(sumOptiSupply, 'sum of unoptimized and optimized supply values are the same');
-                //expect(sumUnoptiLoadStatic).to.deep.equal(sumOptiLoadStatic, 'sum of unoptimized and optimized loadStatic values are the same');
-                //expect(sumUnoptiAcDemand).to.deep.equal(sumOptiAcDemand, 'sum of unoptimized and optimized acDemand values are the same');
-                //expect(sumUnoptiClDemand).to.deep.equal(sumOptiClDemand, 'sum of unoptimized and optimized clDemand values are the same');
-                
-                done();
-            })
-        });
-
-        it('Rules', function(done) {
-            
-            request.post(url, { json: [optimizationFeed] }, function(error, response, body) {
-                
-                if (error) {
-                    console.log(error);
-                }
-
-                var optimization = body[0];    
-                var startClRange = Math.min(...optimizationFeed.clTimeRange);
-                var startAcRange = Math.min(...optimizationFeed.acTimeRange);
-                let endAcRange = Math.max(...optimizationFeed.acTimeRange);
-                let endClRange = Math.max(...optimizationFeed.clTimeRange);
-                var startClOptimizationInterval = optimization.clDemand.value.findIndex(function(number) {return number > 0;}) + 1;
-                var startAcOptimizationInterval = optimization.acDemand.value.findIndex(function(number) {return number > 0;}) + 1;
-                var endClOptimizationInterval;
-                var endAcOptimizationInterval;
-                
-                for (i = optimization.clDemand.value.length - 1; i >= 0; i--) {
-                    if (optimization.clDemand.value[i] > 0) {
-                        endClOptimizationInterval = i + 1;
-                        break;
-                    }
-                }
-                
-                for (i = optimization.acDemand.value.length - 1; i >= 0; i--) {
-                    if (optimization.acDemand.value[i] > 0) {
-                        endAcOptimizationInterval = i + 1;
-                        break;
-                    }
-                }
-
-                assert(startClOptimizationInterval >= startClRange, 'in correct start interval for cl optimization');
-                assert(startAcOptimizationInterval >= startAcRange, 'in correct start interval for ac optimization');
-                assert(endClOptimizationInterval <= endClRange, 'in correct end interval for cl optimization');
-                assert(endAcOptimizationInterval <= endAcRange, 'in correct end interval for ac optimization');
-
-                done();
-            })
-        });
-    })
-})
-
-
-describe('Scenario 3', function() {
-    
-    var optimizationFeed = mockData.optimizationFeeds[2];
-    
-    describe('Response data structure', function() {
-
-        it('Properties', function(done) {
-            
-            request.post(url, { json: [optimizationFeed] }, function(error, response, body) {
-                
-                if (error) {
-                    console.log(error);
-                }
-
-                let optimization = body[0]
-
-                assert.notExists(error, 'error is undefined');
-                expect(optimization).to.have.all.keys('supply', 'loadStatic', 'acDemand', 'clDemand', 'acTimeRange', 'clTimeRange', 'acMaxLoad', 'clMaxLoad');
-                expect(optimization.supply).to.have.all.keys('oliBox', 'type', 'interval', 'value');
-                expect(optimization.loadStatic).to.have.all.keys('oliBox', 'type', 'interval', 'value');
-                expect(optimization.acDemand).to.have.all.keys('oliBox', 'type', 'interval', 'value');
-                expect(optimization.clDemand).to.have.all.keys('oliBox', 'type', 'interval', 'value');
-                assert.isArray(optimization.acTimeRange, 'property acTimeRange exists and is Array');
-                assert.isArray(optimization.clTimeRange, 'property clTimeRange exists and is Array');
-                assert.typeOf(optimization.acMaxLoad, 'number', 'property acMaxLoad exists and is number');
-                assert.exists(optimization.clMaxLoad, 'number', 'property clMaxLoad exists and is number');
-
-                done();
-            })
-        });
-
-        it('Structure', function(done) {
-            
-            request.post(url, { json: [optimizationFeed] }, function(error, response, body) {
-                
-                if (error) {
-                    console.log(error);
-                }
-
-                let optimization = body[0];
-
-                assert.lengthOf(body, 1, 'response body has length of 1');
-                assert.lengthOf(optimization.supply.value, 96, 'supply values has length of 6');
-                assert.lengthOf(optimization.loadStatic.value, 96, 'loadStatic values has length of 6');
-                assert.lengthOf(optimization.acDemand.value, 96, 'acDemand values has length of 6');
-                assert.lengthOf(optimization.clDemand.value, 96, 'clDemand values has length of 6');
-                
-                done();
-            })
-        });
-
-        it('Content', function(done) {
-            
-            request.post(url, { json: [optimizationFeed] }, function(error, response, body) {
-                
-                if (error) {
-                    console.log(error);
-                }
-
-                let optimized = body[0];    
-
-                const reducer = (accumulator, currentValue) => accumulator + currentValue;            
-
-                sumUnoptiSupply =  optimizationFeed.supply.value.reduce(reducer);
-                sumOptiSupply =  optimized.supply.value.reduce(reducer);
-                sumUnoptiLoadStatic =  optimizationFeed.loadStatic.value.reduce(reducer);
-                sumOptiLoadStatic =  optimized.loadStatic.value.reduce(reducer);
-                sumUnoptiAcDemand =  optimizationFeed.acDemand.value.reduce(reducer);
-                sumOptiAcDemand =  optimized.acDemand.value.reduce(reducer);
-                sumUnoptiClDemand =  optimizationFeed.clDemand.value.reduce(reducer);
-                sumOptiClDemand =  optimized.clDemand.value.reduce(reducer);
-                
-                expect(optimized.acTimeRange).to.deep.equal(optimizationFeed.acTimeRange, 'unoptimized and optimized acTimeRange values are the same');
-                expect(optimized.clTimeRange).to.deep.equal(optimizationFeed.clTimeRange, 'unoptimized and optimized clTimeRange values are the same');
-                expect(optimized.acMaxLoad).to.deep.equal(optimizationFeed.acMaxLoad, 'unoptimized and optimized acMaxLoad values are the same');
-                expect(optimized.clMaxLoad).to.deep.equal(optimizationFeed.clMaxLoad, 'unoptimized and optimized clMaxLoad values are the same');
-                //expect(sumUnoptiSupply).to.deep.equal(sumOptiSupply, 'sum of unoptimized and optimized supply values are the same');
-                //expect(sumUnoptiLoadStatic).to.deep.equal(sumOptiLoadStatic, 'sum of unoptimized and optimized loadStatic values are the same');
-                //expect(sumUnoptiAcDemand).to.deep.equal(sumOptiAcDemand, 'sum of unoptimized and optimized acDemand values are the same');
-                //expect(sumUnoptiClDemand).to.deep.equal(sumOptiClDemand, 'sum of unoptimized and optimized clDemand values are the same');
-                
-                done();
-            })
-        });
-
-        it('Rules', function(done) {
-            
-            request.post(url, { json: [optimizationFeed] }, function(error, response, body) {
-                
-                if (error) {
-                    console.log(error);
-                }
-
-                var optimization = body[0];    
-                var startClRange = Math.min(...optimizationFeed.clTimeRange);
-                var startAcRange = Math.min(...optimizationFeed.acTimeRange);
-                let endAcRange = Math.max(...optimizationFeed.acTimeRange);
-                let endClRange = Math.max(...optimizationFeed.clTimeRange);
-                var startClOptimizationInterval = optimization.clDemand.value.findIndex(function(number) {return number > 0;}) + 1;
-                var startAcOptimizationInterval = optimization.acDemand.value.findIndex(function(number) {return number > 0;}) + 1;
-                var endClOptimizationInterval;
-                var endAcOptimizationInterval;
-                
-                for (i = optimization.clDemand.value.length - 1; i >= 0; i--) {
-                    if (optimization.clDemand.value[i] > 0) {
-                        endClOptimizationInterval = i + 1;
-                        break;
-                    }
-                }
-                
-                for (i = optimization.acDemand.value.length - 1; i >= 0; i--) {
-                    if (optimization.acDemand.value[i] > 0) {
-                        endAcOptimizationInterval = i + 1;
-                        break;
-                    }
-                }
-
-                assert(startClOptimizationInterval >= startClRange, 'in correct start interval for cl optimization');
-                assert(startAcOptimizationInterval >= startAcRange, 'in correct start interval for ac optimization');
-                assert(endClOptimizationInterval <= endClRange, 'in correct end interval for cl optimization');
-                assert(endAcOptimizationInterval <= endAcRange, 'in correct end interval for ac optimization');
-
-                done();
-            })
-        });
-    })
-})
+});

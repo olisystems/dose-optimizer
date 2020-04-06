@@ -8,10 +8,12 @@ import bodyParser = require('body-parser');
 import compression = require('compression'); 
 import session = require('express-session');
 import Keycloak = require('keycloak-connect');
-import {config} from './config';
+import { config } from './config';
+import { optimizationCommander } from './optimization/optimization-commander'
 
 var routes = require('./api/rest/routes');
 var app: express.Application = express();
+
 
 
 // app setups
@@ -26,6 +28,10 @@ if (process.env.NODE_ENV !== 'production') {
 } 
 
 
+// optimization commander
+optimizationCommander()
+
+
 // keycloak
 var memoryStore = new session.MemoryStore();                       
 var kcConfig = {
@@ -36,8 +42,6 @@ var kcConfig = {
     sslRequired: "external"
 }
 var keycloak = new Keycloak({ store: memoryStore }, kcConfig);
-
-
 
 app.use(session({
     secret: 'cf08c63a-ca0f-4598-a78d-faf021ce9a12', //config.keycloak.secret,                         

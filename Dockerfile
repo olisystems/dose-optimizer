@@ -7,7 +7,7 @@ WORKDIR /home/node/app
 COPY package*.json ./
 COPY keycloak.json ./
 
-#USER node
+USER node
 
 RUN npm install
 

@@ -197,7 +197,7 @@ async function plotUnoptimized(optimizationFeed, unoptimizedDivId) {
 // get optimization data
 async function getUnoptimizedData() {
 
-    const requestUrl = `${url}:${port}/${apiVersion}`;
+    const requestUrl = `${url}:${port}/${apiVersion}/${resourcePath}`;
     const response = await fetch(requestUrl);
     const optimizationData = await response.json();
 
@@ -379,7 +379,7 @@ async function plotOptimized(optimizationFeed, optimizedDivId) {
 async function getOptimizedData(optimizationFeed) {
 
     // get unoptimized data
-    const requestUrl = `${url}:${port}/${apiVersion}`;    
+    const requestUrl = `${url}:${port}/${apiVersion}/${resourcePath}`;    
 
     // get optimized data
     try {
