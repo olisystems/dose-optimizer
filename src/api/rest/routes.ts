@@ -107,7 +107,7 @@ router.get('/tenant/activation/:oliId', /*keycloak.protect(),*/ async (req, res)
  * Activate and deactivate the optimization for a tenant
  * protected 
  */
-router.patch('/tenant/:oliId', /*keycloak.protect(),*/ async (req, res) => {
+router.patch('/tenant/activation/:oliId', /*keycloak.protect(),*/ async (req, res) => {
     
     let optimizationRes = await optimizationDb.activateTenant(req.params.oliId, req.body.active)
     
