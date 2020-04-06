@@ -81,7 +81,7 @@ All requests requiring an authentication. The authentication is applied, by send
 | Method  | Endpoint  | Parameter  | Response  |
 | ------------- | ------------- | ------------ | ------------ |
 | GET  | /v1/optimizations/:oliId  | -  | body: optimization object; statusCode: 200  |
-| POST  | /v1/optimizations  | optimization object  | body: optimization object; statusCode: 201  |
+| POST  | /v1/optimizations  | body: optimization object  | body: optimization object; statusCode: 201  |
 | DELETE  | /v1/optimizations/:optimizationPk  | -  |  statusCode: 200  |
 
 Note:  
@@ -91,7 +91,7 @@ Optimization object structure, can be found under: ```./src/data-models/energy-p
 | Method  | Endpoint  | Parameter  | Response  |
 | ------------- | ------------- | ------------ | ------------ |
 | GET  | /v1/tenant/activation/:oliId  | -  | body: active: 0/1 statusCode: 200  |
-| PATCH  | /v1/optimizations  | optimization object  | statusCode: 200  |
+| PATCH  | /v1/tenant/activation/:oliId  | body: {active: 0/1}  | statusCode: 200  |
 
 Note:  
 active: 1 -> optimization mechanism is activated  
