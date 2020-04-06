@@ -33,8 +33,16 @@ npm run build
    
 4. Start app.
 ```
-npm start:prod
+npm run start:prod
 ```
+Requirements for step 4:
+* pm2 must be installed globally
+
+The service can be run in develop mode as well, by running:
+```
+npm run dev
+``` 
+
 ### Docker
 1. Uset the ```./Dockerfile``` file to build an docker image of the optimization service.
 
@@ -46,7 +54,7 @@ The source code documentation lies under ```./docs.```. It exists as html files,
 typedoc --out docs/ src/
 ```
 Requirements:
-* typedoc  
+* typedoc
 
 ## Testing
 The service must be started before it can be tested. The optimization algorithm can be tested in two ways:
